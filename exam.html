@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Page</title>
+    <style>
+        video {
+            width: 300px;
+            border: 2px solid black;
+        }
+        #alert-box {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Online Exam</h1>
+
+    <video id="webcam" autoplay playsinline></video>
+    <br>
+    <button onclick="startProctoring()">Start Proctoring</button>
+
+    <div id="alert-box"></div>
+
+    <script>
+        let video = document.getElementById("webcam");
+        let student_id = "student001";
+        let streamStarted = false;
+
+        // Start webcam ONLY when user clicks Start
+        function startWebcam() {
+            if (streamStarted) return;
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                    streamStarted = true;
+                })
+                .catch(err => {
+                    alert("Camera Error: " + err);
+                });
+        }
+
+        function startProctoring() {
+            startWebcam();
+            // Delay so webcam loads
+            setTimeout(() => {
+                setInterval(captureAndSendFrame, 2000);
+            }, 1200);
+        }
+
+        function captureAndSendFrame() {
+            if (video.videoWidth === 0) return; // webcam not ready
+
+            let canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+
+            canvas.toBlob(blob => {
+                let formData = new FormData();
+                formData.append("student_id", student_id);
+                formData.append("file", blob, "frame.jpg");
+
+                fetch("/proctor/upload_frame", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    let alertBox = document.getElementById("alert-box");
+                    if (data.issues.length > 0) {
+                        alertBox.innerHTML = "⚠ " + data.issues.join(", ");
+                    } else {
+                        alertBox.innerHTML = "";
+                    }
+                });
+            }, "image/jpeg");
+        }
+    </script>
+
+</body>
+</html>
