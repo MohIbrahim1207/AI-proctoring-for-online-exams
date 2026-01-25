@@ -1,0 +1,18 @@
+2026-01-25 14:30:10.268314 | student_001 | Tab switched attempt 1
+2026-01-25 14:30:19.143805 | student_001 | Tab switched attempt 2
+2026-01-25 14:30:26.713146 | student_001 | Tab switched attempt 3
+2026-01-25 14:30:34.366096 | student_001 | Tab switched attempt 4
+2026-01-25 14:46:06.759660 | student_001 | Tab switched attempt 1
+2026-01-25 14:46:10.631922 | student_001 | Tab switched attempt 2
+2026-01-25 14:46:11.989208 | student_001 | Tab switched attempt 3
+2026-01-25 14:46:18.203126 | student_001 | Tab switched attempt 4
+2026-01-25 15:05:59.653167 | student_001 | Tab switched attempt 1
+2026-01-25 15:06:17.794648 | student_001 | Tab switched attempt 2
+2026-01-25 15:06:35.867288 | student_001 | Tab switched attempt 3
+2026-01-25 15:06:42.094890 | student_001 | Tab switched attempt 4
+2026-01-25 15:09:40.354179 | student_001 | Tab switched attempt 1
+2026-01-25 15:09:47.116238 | student_001 | Tab switched attempt 2
+2026-01-25 17:50:03.775049 | student_001 | Tab switch 1
+2026-01-25 17:50:10.997978 | student_001 | Tab switch 2
+2026-01-25 17:50:13.375969 | student_001 | Tab switch 3
+2026-01-25 17:50:16.493208 | student_001 | Tab switch 4

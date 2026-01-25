@@ -1,1 +1,3 @@
 2026-01-17 14:17:46.324540 | student1 | ['No face detected']
+2026-01-25 17:49:38.413580 | student1 | ['No face detected']
+2026-01-25 17:49:41.951768 | student1 | ['No face detected']

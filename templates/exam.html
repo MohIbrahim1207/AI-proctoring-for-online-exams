@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <title>MCQ Exam</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 
     <style>
         .question-card {
@@ -26,6 +24,20 @@
 
     <h3 class="text-center mb-4">MCQ Examination</h3>
 
+    <!-- Webcam Preview -->
+    <div class="text-center mb-3">
+        <video id="webcam" width="240" autoplay muted
+               style="border:2px solid #333; border-radius:8px;">
+        </video>
+    </div>
+
+    <!-- Start Exam Button -->
+    <div class="text-center mb-3">
+        <button id="startBtn" class="btn btn-primary" onclick="startExam()">
+            Start Exam
+        </button>
+    </div>
+
     <!-- Timer -->
     <div class="text-center mb-3">
         <span class="badge bg-warning text-dark" id="timer">
@@ -33,7 +45,7 @@
         </span>
     </div>
 
-    <form method="POST" action="/submit_exam">
+    <form id="examForm" method="POST" action="/submit_exam">
 
         {% for q in questions %}
         <div class="question-card">
@@ -45,8 +57,7 @@
                        type="radio"
                        name="{{ q.id }}"
                        value="{{ opt }}"
-                       required>
-
+                       disabled>
                 <label class="form-check-label">
                     {{ opt }}
                 </label>
@@ -56,7 +67,7 @@
         {% endfor %}
 
         <div class="text-center">
-            <button type="submit" class="btn btn-success mt-3">
+            <button type="submit" class="btn btn-success mt-3" disabled id="submitBtn">
                 Submit Exam
             </button>
         </div>
@@ -65,7 +76,108 @@
 
 </div>
 
-<script src="{{ url_for('static', filename='exam.js') }}"></script>
+<!-- ================= SCRIPTS ================= -->
+
+<script>
+const studentId = "student_001";
+let tabSwitchCount = 0;
+const MAX_TAB_SWITCH = 3;
+
+let cameraStream;
+let screenStream;
+let screenInterval;
+
+// -------- START CAMERA --------
+async function startCamera() {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false
+    });
+    document.getElementById("webcam").srcObject = cameraStream;
+}
+
+// -------- START SCREEN + CAMERA --------
+async function startExam() {
+    try {
+        // Start camera
+        await startCamera();
+
+        // Start screen sharing
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+            video: { frameRate: 1 }
+        });
+
+        alert("✅ Camera & Screen monitoring started. Exam unlocked.");
+        enableExam();
+
+        const video = document.createElement("video");
+        video.srcObject = screenStream;
+        video.play();
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        screenInterval = setInterval(() => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append("student_id", studentId);
+                formData.append("file", blob, "screen.jpg");
+
+                fetch("/proctor/upload_screen", {
+                    method: "POST",
+                    body: formData
+                });
+            }, "image/jpeg", 0.6);
+
+        }, 5000);
+
+        // If screen sharing stops
+        screenStream.getVideoTracks()[0].onended = () => {
+            alert("❌ Screen sharing stopped! Exam submitted.");
+            clearInterval(screenInterval);
+            document.getElementById("examForm").submit();
+        };
+
+    } catch (err) {
+        alert("❌ Camera & screen permission is mandatory.");
+    }
+}
+
+// -------- ENABLE EXAM --------
+function enableExam() {
+    document.querySelectorAll("input").forEach(i => i.disabled = false);
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("startBtn").disabled = true;
+}
+
+// -------- TAB SWITCH DETECTION --------
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        tabSwitchCount++;
+
+        fetch("/log_violation", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                student_id: studentId,
+                reason: "Tab switch " + tabSwitchCount
+            })
+        });
+
+        if (tabSwitchCount >= MAX_TAB_SWITCH) {
+            alert("❌ Too many violations. Exam submitted.");
+            document.getElementById("examForm").submit();
+        }
+    }
+});
+
+// -------- REFRESH WARNING --------
+window.onbeforeunload = () => "Leaving will submit your exam!";
+</script>
 
 </body>
 </html>

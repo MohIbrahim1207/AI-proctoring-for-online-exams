@@ -49,6 +49,23 @@ questions = [
 def index():
     return render_template("index.html")
 
+@app.route("/proctor/upload_screen", methods=["POST"])
+def upload_screen():
+    student_id = request.form.get("student_id")
+    file = request.files.get("file")
+
+    if not file or not student_id:
+        return jsonify({"status": "error"})
+
+    filename = f"uploads/screen_{student_id}_{datetime.now().timestamp()}.jpg"
+    file.save(filename)
+
+    with open("logs/screen_log.txt", "a") as log:
+        log.write(f"{datetime.now()} | {student_id} | Screen captured\n")
+
+    return jsonify({"status": "saved"})
+
+
 @app.route("/exam")
 def exam():
     return render_template("exam.html", questions=questions)
@@ -104,6 +121,19 @@ def upload_frame():
         "faces_detected": len(faces),
         "issues": issues
     })
+@app.route("/log_violation", methods=["POST"])
+def log_violation():
+    data = request.json
+    student_id = data.get("student_id", "unknown")
+    reason = data.get("reason", "unknown")
+
+    with open("logs/violations.txt", "a") as log:
+        log.write(f"{datetime.now()} | {student_id} | {reason}\n")
+
+    return jsonify({"status": "logged"})
+
+
+
 
 # ------------------------------
 # Run Server
