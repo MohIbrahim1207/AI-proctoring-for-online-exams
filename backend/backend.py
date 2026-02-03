@@ -24,11 +24,11 @@ face_cascade = cv2.CascadeClassifier(
 # ------------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("backend/index.html")
 
 @app.route("/exam")
 def exam():
-    return render_template("exam.html")
+    return render_template("backend/exam.html")
 
 # ------------------------------
 # Optional Login (Demo only)

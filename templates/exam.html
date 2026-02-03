@@ -30,23 +30,33 @@
 
     <!-- Start Button -->
     <div class="text-center mb-3">
-        <button id="startBtn" class="btn btn-primary" onclick="startExam()">Start Exam</button>
+        <button id="startBtn" class="btn btn-primary" onclick="startExam()">
+            Start Exam
+        </button>
     </div>
 
+    <!-- EXAM FORM -->
     <form id="examForm" method="POST" action="/submit_exam">
 
-        <!-- SAMPLE QUESTION -->
+        {% for q in questions %}
         <div class="question-card">
-            <p><strong>1. What is Java?</strong></p>
+            <p><strong>{{ loop.index }}. {{ q.question }}</strong></p>
+
+            {% for opt in q.options %}
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="q1" disabled>
-                <label class="form-check-label">Programming Language</label>
+                <input class="form-check-input"
+                       type="radio"
+                       name="{{ q.id }}"
+                       value="{{ opt }}"
+                       disabled
+                       required>
+                <label class="form-check-label">
+                    {{ opt }}
+                </label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="q1" disabled>
-                <label class="form-check-label">Database</label>
-            </div>
+            {% endfor %}
         </div>
+        {% endfor %}
 
         <div class="text-center">
             <button type="submit" class="btn btn-success mt-3" disabled id="submitBtn">
@@ -58,9 +68,10 @@
 </div>
 
 <script>
+/* ================== CONFIG ================== */
 const studentId = "student_001";
 
-/* ---------------- TAB SWITCH ---------------- */
+/* ================== TAB SWITCH ================== */
 let tabSwitchCount = 0;
 const MAX_TAB_SWITCH = 3;
 
@@ -86,7 +97,7 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
-/* ---------------- CAMERA ---------------- */
+/* ================== CAMERA ================== */
 let cameraStream;
 
 async function startCamera() {
@@ -97,7 +108,7 @@ async function startCamera() {
     document.getElementById("webcam").srcObject = cameraStream;
 }
 
-/* ---------------- FACE NOT DETECTED ---------------- */
+/* ================== FACE NOT DETECTED ================== */
 let faceMissCount = 0;
 const MAX_FACE_MISS = 3;
 
@@ -107,7 +118,7 @@ setInterval(() => {
     if (!video.srcObject || video.videoWidth === 0) {
         faceMissCount++;
 
-        alert("⚠️ Face not detected! Please stay in front of the camera.\nWarning: " + faceMissCount);
+        alert("⚠️ Face not detected!\nWarning: " + faceMissCount);
 
         fetch("/log_violation", {
             method: "POST",
@@ -125,14 +136,17 @@ setInterval(() => {
     }
 }, 7000);
 
-/* ---------------- START EXAM ---------------- */
+/* ================== START EXAM ================== */
 async function startExam() {
     try {
         await startCamera();
 
         alert("✅ Exam started. Monitoring enabled.");
 
-        document.querySelectorAll("input").forEach(i => i.disabled = false);
+        document
+            .querySelectorAll("input[type=radio]")
+            .forEach(i => i.disabled = false);
+
         document.getElementById("submitBtn").disabled = false;
         document.getElementById("startBtn").disabled = true;
 
@@ -141,7 +155,7 @@ async function startExam() {
     }
 }
 
-/* ---------------- REFRESH WARNING ---------------- */
+/* ================== REFRESH WARNING ================== */
 window.onbeforeunload = () => "Leaving will submit your exam!";
 </script>
 
