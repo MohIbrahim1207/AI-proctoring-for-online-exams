@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+
 from datetime import datetime
 import cv2
 import os
 
-app = Flask(__name__, template_folder="../templates", static_folder="../static")
+app = Flask(__name__)
+
+app.secret_key = "exam_secret_key"
+
 
 
 # ------------------------------
@@ -46,9 +50,27 @@ questions = [
 # ------------------------------
 # ROUTES
 # ------------------------------
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        if password == "1234":
+            session["user"] = email
+            session["role"] = role
+
+            if role == "student":
+                return redirect(url_for("exam"))
+            else:
+                return redirect(url_for("teacher"))
+
+        return render_template("login.html", error="Invalid credentials")
+
+    return render_template("login.html")
+
+
 
 @app.route("/proctor/upload_screen", methods=["POST"])
 def upload_screen():
@@ -69,7 +91,11 @@ def upload_screen():
 
 @app.route("/exam")
 def exam():
+    if "user" not in session or session.get("role") != "student":
+        return redirect(url_for("login"))
+
     return render_template("exam.html", questions=questions)
+
 
 @app.route("/submit_exam", methods=["POST"])
 def submit_exam():
@@ -79,6 +105,14 @@ def submit_exam():
             score += 1
 
     return f"<h2>Your Score: {score}/{len(questions)}</h2>"
+
+
+@app.route("/teacher")
+def teacher():
+    if "user" not in session or session.get("role") != "teacher":
+        return redirect(url_for("login"))
+
+    return "<h2>Teacher Dashboard</h2><p>Logged in as Teacher</p><a href='/logout'>Logout</a>"
 
 # ------------------------------
 # PROCTORING FRAME UPLOAD
@@ -133,6 +167,10 @@ def log_violation():
 
     return jsonify({"status": "logged"})
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 

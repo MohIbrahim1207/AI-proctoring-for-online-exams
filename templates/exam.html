@@ -14,6 +14,10 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        #alerts {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -24,8 +28,9 @@
 
     <!-- Webcam -->
     <div class="text-center mb-3">
-        <video id="webcam" width="240" autoplay muted
+        <video id="video" width="240" autoplay muted playsinline
                style="border:2px solid #333; border-radius:8px;"></video>
+        <p id="alerts"></p>
     </div>
 
     <!-- Start Button -->
@@ -68,94 +73,114 @@
 </div>
 
 <script>
-/* ================== CONFIG ================== */
+/* ================= CONFIG ================= */
 const studentId = "student_001";
+let violationCount = 0;
+const MAX_VIOLATIONS = 3;
 
-/* ================== TAB SWITCH ================== */
-let tabSwitchCount = 0;
-const MAX_TAB_SWITCH = 3;
-
+/* ================= TAB SWITCH ================= */
 document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-        tabSwitchCount++;
-
-        alert("⚠️ Warning: Tab switching is not allowed!\nAttempt: " + tabSwitchCount);
+        violationCount++;
+        alert("⚠️ Tab switching detected!");
 
         fetch("/log_violation", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 student_id: studentId,
-                reason: "Tab switched " + tabSwitchCount
+                reason: "Tab switched"
             })
         });
 
-        if (tabSwitchCount >= MAX_TAB_SWITCH) {
-            alert("❌ Too many tab switches. Exam will be submitted.");
-            document.getElementById("examForm").submit();
-        }
+        checkAutoSubmit();
     }
 });
 
-/* ================== CAMERA ================== */
-let cameraStream;
+/* ================= CAMERA ================= */
+let stream;
 
 async function startCamera() {
-    cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false
-    });
-    document.getElementById("webcam").srcObject = cameraStream;
+    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    document.getElementById("video").srcObject = stream;
 }
 
-/* ================== FACE NOT DETECTED ================== */
-let faceMissCount = 0;
-const MAX_FACE_MISS = 3;
+/* ================= SEND FRAMES ================= */
+function startProctoring() {
+    const video = document.getElementById("video");
 
-setInterval(() => {
-    const video = document.getElementById("webcam");
+    setInterval(() => {
+        if (!video.videoWidth || !video.videoHeight) return;
 
-    if (!video.srcObject || video.videoWidth === 0) {
-        faceMissCount++;
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
 
-        alert("⚠️ Face not detected!\nWarning: " + faceMissCount);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0);
 
-        fetch("/log_violation", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                student_id: studentId,
-                reason: "Face not detected"
+        canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append("file", blob, "frame.jpg");
+            formData.append("student_id", studentId);
+
+            fetch("/proctor/upload_frame", {
+                method: "POST",
+                body: formData
             })
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.issues && data.issues.length > 0) {
+                    violationCount++;
+                    document.getElementById("alerts").innerText =
+                        "⚠️ " + data.issues.join(", ");
 
-        if (faceMissCount >= MAX_FACE_MISS) {
-            alert("❌ Face not detected multiple times. Exam submitted.");
-            document.getElementById("examForm").submit();
-        }
-    }
-}, 7000);
+                    fetch("/log_violation", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            student_id: studentId,
+                            reason: data.issues.join(", ")
+                        })
+                    });
 
-/* ================== START EXAM ================== */
+                    checkAutoSubmit();
+                } else {
+                    document.getElementById("alerts").innerText = "";
+                }
+            });
+        }, "image/jpeg");
+    }, 5000);
+}
+
+/* ================= START EXAM ================= */
 async function startExam() {
     try {
         await startCamera();
+        startProctoring();
 
-        alert("✅ Exam started. Monitoring enabled.");
+        alert("✅ Exam started. Proctoring enabled.");
 
-        document
-            .querySelectorAll("input[type=radio]")
+        document.querySelectorAll("input[type=radio]")
             .forEach(i => i.disabled = false);
 
         document.getElementById("submitBtn").disabled = false;
         document.getElementById("startBtn").disabled = true;
 
-    } catch (err) {
-        alert("❌ Camera permission is mandatory to start the exam.");
+    } catch {
+        alert("❌ Camera permission is mandatory.");
     }
 }
 
-/* ================== REFRESH WARNING ================== */
+/* ================= AUTO SUBMIT ================= */
+function checkAutoSubmit() {
+    if (violationCount >= MAX_VIOLATIONS) {
+        alert("❌ Too many violations. Exam submitted.");
+        document.getElementById("examForm").submit();
+    }
+}
+
+/* ================= REFRESH WARNING ================= */
 window.onbeforeunload = () => "Leaving will submit your exam!";
 </script>
 
