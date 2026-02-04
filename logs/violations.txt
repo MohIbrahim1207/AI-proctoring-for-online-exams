@@ -83,3 +83,24 @@
 2026-02-04 14:17:23.045870 | student_001 | No face detected
 2026-02-04 14:17:30.067029 | student_001 | Tab switched
 2026-02-04 14:17:31.855179 | student_001 | Tab switched
+2026-02-04 14:22:56.979555 | student_001 | No face detected
+2026-02-04 14:23:01.118107 | student_001 | No face detected
+2026-02-04 14:23:06.114534 | student_001 | No face detected
+2026-02-04 14:23:11.097561 | student_001 | Tab switched
+2026-02-04 14:25:22.402036 | student_001 | No face detected
+2026-02-04 14:25:31.383508 | student_001 | Tab switched
+2026-02-04 14:25:32.329725 | student_001 | No face detected
+2026-02-04 14:25:35.597128 | student_001 | Tab switched
+2026-02-04 14:26:08.167934 | student_001 | Tab switched
+2026-02-04 14:26:08.258944 | student_001 | No face detected
+2026-02-04 14:26:17.052774 | student_001 | No face detected
+2026-02-04 14:26:24.859091 | student_001 | No face detected
+2026-02-04 14:26:32.053767 | student_001 | No face detected
+2026-02-04 14:27:03.953076 | student_001 | Tab switched
+2026-02-04 14:27:05.756899 | student_001 | No face detected
+2026-02-04 14:27:10.730888 | student_001 | No face detected
+2026-02-04 14:27:15.003423 | student_001 | Tab switched
+2026-02-04 14:30:18.979312 | student_001 | Multiple faces detected
+2026-02-04 14:30:26.892429 | student_001 | Tab switched
+2026-02-04 14:30:28.946771 | student_001 | Multiple faces detected
+2026-02-04 14:30:32.662190 | student_001 | Tab switched

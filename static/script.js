@@ -1,15 +1,6 @@
-// ===============================
-// LOGIN REMOVED FOR NOW
-// ===============================
-
-// The app now starts immediately without login.
-// Student ID is hardcoded for testing.
 const student_id = "student1";
 
-// =====================================
-// START WEBCAM IMMEDIATELY ON PAGE LOAD
-// =====================================
-window.onload = function () {
+window.onload = () => {
     startWebcam();
     startSendingFrames(student_id);
 };
@@ -20,46 +11,41 @@ window.onload = function () {
 function startWebcam() {
     const video = document.getElementById("video");
 
-    console.log("Requesting camera…");
-
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
-            console.log("Camera stream obtained:", stream);
             video.srcObject = stream;
-            document.getElementById("status").innerText = "Webcam active.";
+            document.getElementById("status").innerText = "Webcam active";
         })
         .catch(err => {
-            console.error("Camera error: ", err);
-            document.getElementById("status").innerText = "Webcam error: " + err.name;
-
-            if (err.name === "NotAllowedError") {
-                document.getElementById("status").innerText +=
-                    " (Camera blocked — enable permissions)";
-            }
-
-            if (err.name === "NotFoundError") {
-                document.getElementById("status").innerText +=
-                    " (No camera detected)";
-            }
+            document.getElementById("status").innerText =
+                "Webcam error: " + err.name;
         });
 }
 
-
 // ---------------------------
-// SEND FRAMES EVERY 5 SEC
+// SEND FRAMES EVERY 5 SECONDS
 // ---------------------------
 function startSendingFrames(student_id) {
     const video = document.getElementById("video");
 
     setInterval(() => {
-        let canvas = document.createElement("canvas");
+
+        // ✅ wait for video to be ready
+        if (!video.videoWidth || !video.videoHeight) {
+            console.log("⏳ Video not ready");
+            return;
+        }
+
+        const canvas = document.createElement("canvas");
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        let ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0);
 
         canvas.toBlob(blob => {
+            if (!blob) return;
+
             const formData = new FormData();
             formData.append("student_id", student_id);
             formData.append("file", blob, "frame.jpg");
@@ -70,13 +56,17 @@ function startSendingFrames(student_id) {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.issues.length > 0) {
+                console.log("Server:", data);
+
+                if (data.issues && data.issues.length > 0) {
                     document.getElementById("alerts").innerText =
                         "⚠️ " + data.issues.join(", ");
                 } else {
                     document.getElementById("alerts").innerText = "";
                 }
             });
+
         }, "image/jpeg");
+
     }, 5000);
 }
