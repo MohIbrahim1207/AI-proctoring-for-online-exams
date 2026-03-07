@@ -1,0 +1,112 @@
+[
+  {
+    "id": "c1",
+    "question": "Which of the following serves as the entry point for a C program?",
+    "options": [
+      "main()",
+      "start()",
+      "init()",
+      "program()"
+    ],
+    "answer": "main()"
+  },
+  {
+    "id": "c2",
+    "question": "What is the size of an int data type in C (typically on 32-bit systems)?",
+    "options": [
+      "2 bytes",
+      "4 bytes",
+      "8 bytes",
+      "1 byte"
+    ],
+    "answer": "4 bytes"
+  },
+  {
+    "id": "c3",
+    "question": "Which header file is required for printf() function?",
+    "options": [
+      "<stdio.h>",
+      "<conio.h>",
+      "<stdlib.h>",
+      "<math.h>"
+    ],
+    "answer": "<stdio.h>"
+  },
+  {
+    "id": "c4",
+    "question": "Which operator is used to access the address of a variable?",
+    "options": [
+      "*",
+      "&",
+      "->",
+      "."
+    ],
+    "answer": "&"
+  },
+  {
+    "id": "c5",
+    "question": "What is the correct syntax to declare a pointer?",
+    "options": [
+      "int *ptr;",
+      "int ptr*;",
+      "*int ptr;",
+      "address ptr;"
+    ],
+    "answer": "int *ptr;"
+  },
+  {
+    "id": "c6",
+    "question": "Which loop is guaranteed to execute at least once?",
+    "options": [
+      "for",
+      "while",
+      "do-while",
+      "foreach"
+    ],
+    "answer": "do-while"
+  },
+  {
+    "id": "c7",
+    "question": "What is the escape sequence for a new line?",
+    "options": [
+      "\\n",
+      "\\t",
+      "\\r",
+      "\\a"
+    ],
+    "answer": "\\n"
+  },
+  {
+    "id": "c8",
+    "question": "In C, array indices start from:",
+    "options": [
+      "0",
+      "1",
+      "-1",
+      "undefined"
+    ],
+    "answer": "0"
+  },
+  {
+    "id": "c9",
+    "question": "Which keyword is used to prevent a variable from being modified?",
+    "options": [
+      "const",
+      "static",
+      "volatile",
+      "immutable"
+    ],
+    "answer": "const"
+  },
+  {
+    "id": "c10",
+    "question": "What is the result of 5 % 2 in C?",
+    "options": [
+      "1",
+      "2.5",
+      "2",
+      "0"
+    ],
+    "answer": "1"
+  }
+]

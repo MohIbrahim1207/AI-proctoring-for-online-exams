@@ -1,0 +1,112 @@
+[
+    {
+        "id": "rdbms1",
+        "question": "What does RDBMS stand for?",
+        "options": [
+            "Relational Database Management System",
+            "Regional Data Management System",
+            "Relational Data Management Service",
+            "Random Database Manipulation System"
+        ],
+        "answer": "Relational Database Management System"
+    },
+    {
+        "id": "rdbms2",
+        "question": "In an RDBMS, a table is also known as a:",
+        "options": [
+            "Relation",
+            "Tuple",
+            "Attribute",
+            "Field"
+        ],
+        "answer": "Relation"
+    },
+    {
+        "id": "rdbms3",
+        "question": "Which key uniquely identifies a record in a table?",
+        "options": [
+            "Primary Key",
+            "Foreign Key",
+            "Candidate Key",
+            "Alternate Key"
+        ],
+        "answer": "Primary Key"
+    },
+    {
+        "id": "rdbms4",
+        "question": "A row in a table is called a:",
+        "options": [
+            "Tuple",
+            "Attribute",
+            "Degree",
+            "Domain"
+        ],
+        "answer": "Tuple"
+    },
+    {
+        "id": "rdbms5",
+        "question": "The number of attributes (columns) in a relation is called its:",
+        "options": [
+            "Degree",
+            "Cardinality",
+            "Domain",
+            "Size"
+        ],
+        "answer": "Degree"
+    },
+    {
+        "id": "rdbms6",
+        "question": "The number of tuples (rows) in a relation is called its:",
+        "options": [
+            "Cardinality",
+            "Degree",
+            "Volume",
+            "Density"
+        ],
+        "answer": "Cardinality"
+    },
+    {
+        "id": "rdbms7",
+        "question": "Which normal form eliminates partial dependency?",
+        "options": [
+            "2NF",
+            "1NF",
+            "3NF",
+            "BCNF"
+        ],
+        "answer": "2NF"
+    },
+    {
+        "id": "rdbms8",
+        "question": "What is ACID in database transactions?",
+        "options": [
+            "Atomicity, Consistency, Isolation, Durability",
+            "Accuracy, Consistency, Isolation, Durability",
+            "Atomicity, Concurrency, Isolation, Dupability",
+            "Atomicity, Consistency, Integrity, Durability"
+        ],
+        "answer": "Atomicity, Consistency, Isolation, Durability"
+    },
+    {
+        "id": "rdbms9",
+        "question": "Which command is used to remove a relation from an SQL database?",
+        "options": [
+            "DROP TABLE",
+            "DELETE TABLE",
+            "PURGE TABLE",
+            "REMOVE TABLE"
+        ],
+        "answer": "DROP TABLE"
+    },
+    {
+        "id": "rdbms10",
+        "question": "A foreign key creates a link between:",
+        "options": [
+            "Two tables",
+            "Two rows",
+            "Two databases",
+            "Two servers"
+        ],
+        "answer": "Two tables"
+    }
+]

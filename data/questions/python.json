@@ -1,0 +1,112 @@
+[
+    {
+        "id": "py1",
+        "question": "Which keyword is used to define a function in Python?",
+        "options": [
+            "def",
+            "func",
+            "function",
+            "define"
+        ],
+        "answer": "def"
+    },
+    {
+        "id": "py2",
+        "question": "Which data type is immutable in Python?",
+        "options": [
+            "Tuple",
+            "List",
+            "Dictionary",
+            "Set"
+        ],
+        "answer": "Tuple"
+    },
+    {
+        "id": "py3",
+        "question": "How do you insert comments in Python code?",
+        "options": [
+            "#",
+            "//",
+            "/* */",
+            "<!-- -->"
+        ],
+        "answer": "#"
+    },
+    {
+        "id": "py4",
+        "question": "What is the output of print(2 ** 3)?",
+        "options": [
+            "8",
+            "6",
+            "5",
+            "9"
+        ],
+        "answer": "8"
+    },
+    {
+        "id": "py5",
+        "question": "Which collection allows duplicate members?",
+        "options": [
+            "List",
+            "Set",
+            "Dictionary",
+            "None of the above"
+        ],
+        "answer": "List"
+    },
+    {
+        "id": "py6",
+        "question": "How do you start a for loop in Python?",
+        "options": [
+            "for x in y:",
+            "for x in y do",
+            "foreach x in y",
+            "loop x in y"
+        ],
+        "answer": "for x in y:"
+    },
+    {
+        "id": "py7",
+        "question": "What is the correct file extension for Python files?",
+        "options": [
+            ".py",
+            ".python",
+            ".pt",
+            ".pi"
+        ],
+        "answer": ".py"
+    },
+    {
+        "id": "py8",
+        "question": "Which library is used for data analysis in Python?",
+        "options": [
+            "Pandas",
+            "Requests",
+            "Flask",
+            "PyGame"
+        ],
+        "answer": "Pandas"
+    },
+    {
+        "id": "py9",
+        "question": "How do you create a variable with the numeric value 5?",
+        "options": [
+            "x = 5",
+            "x == 5",
+            "int x = 5",
+            "dim x = 5"
+        ],
+        "answer": "x = 5"
+    },
+    {
+        "id": "py10",
+        "question": "What does 'break' do in a loop?",
+        "options": [
+            "Exits the loop",
+            "Restarts the loop",
+            "Skips the current iteration",
+            "Stops the program"
+        ],
+        "answer": "Exits the loop"
+    }
+]

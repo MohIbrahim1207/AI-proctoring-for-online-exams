@@ -1,0 +1,112 @@
+[
+    {
+        "id": "ds1",
+        "question": "Which data structure uses LIFO (Last In First Out)?",
+        "options": [
+            "Stack",
+            "Queue",
+            "Array",
+            "Linked List"
+        ],
+        "answer": "Stack"
+    },
+    {
+        "id": "ds2",
+        "question": "Which data structure uses FIFO (First In First Out)?",
+        "options": [
+            "Queue",
+            "Stack",
+            "Tree",
+            "Graph"
+        ],
+        "answer": "Queue"
+    },
+    {
+        "id": "ds3",
+        "question": "Which of the following is a non-linear data structure?",
+        "options": [
+            "Tree",
+            "Stack",
+            "Queue",
+            "Linked List"
+        ],
+        "answer": "Tree"
+    },
+    {
+        "id": "ds4",
+        "question": "What is the time complexity to access an element in an array?",
+        "options": [
+            "O(1)",
+            "O(n)",
+            "O(log n)",
+            "O(n^2)"
+        ],
+        "answer": "O(1)"
+    },
+    {
+        "id": "ds5",
+        "question": "Which data structure is best for implementing recursion?",
+        "options": [
+            "Stack",
+            "Queue",
+            "List",
+            "Graph"
+        ],
+        "answer": "Stack"
+    },
+    {
+        "id": "ds6",
+        "question": "In a linked list, each node contains data and:",
+        "options": [
+            "A pointer to the next node",
+            "The previous data",
+            "The index",
+            "A key"
+        ],
+        "answer": "A pointer to the next node"
+    },
+    {
+        "id": "ds7",
+        "question": "Which algorithm is used to find the shortest path in a graph?",
+        "options": [
+            "Dijkstra's Algorithm",
+            "Binary Search",
+            "Merge Sort",
+            "DFS"
+        ],
+        "answer": "Dijkstra's Algorithm"
+    },
+    {
+        "id": "ds8",
+        "question": "A binary search tree has a time complexity of:",
+        "options": [
+            "O(log n)",
+            "O(n)",
+            "O(1)",
+            "O(n log n)"
+        ],
+        "answer": "O(log n)"
+    },
+    {
+        "id": "ds9",
+        "question": "Which data structure is used to implement a priority queue?",
+        "options": [
+            "Heap",
+            "Stack",
+            "Array",
+            "Graph"
+        ],
+        "answer": "Heap"
+    },
+    {
+        "id": "ds10",
+        "question": "What is the worst-case time complexity of QuickSort?",
+        "options": [
+            "O(n^2)",
+            "O(n log n)",
+            "O(n)",
+            "O(log n)"
+        ],
+        "answer": "O(n^2)"
+    }
+]

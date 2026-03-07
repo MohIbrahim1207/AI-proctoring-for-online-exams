@@ -104,3 +104,106 @@
 2026-02-04 14:30:26.892429 | student_001 | Tab switched
 2026-02-04 14:30:28.946771 | student_001 | Multiple faces detected
 2026-02-04 14:30:32.662190 | student_001 | Tab switched
+2026-02-05 10:11:33.811406 | student_001 | Tab switched
+2026-02-05 10:12:19.756091 | student_001 | Tab switched
+2026-02-05 10:13:07.394054 | student_001 | Tab switched
+2026-02-05 10:13:13.776120 | student_001 | Tab switched
+2026-02-05 10:13:16.853533 | student_001 | Tab switched
+2026-02-05 10:26:59.791333 | student_001 | Tab switched
+2026-02-05 11:49:09.727005 | student_001 | Tab switched
+2026-02-16 21:49:59.633167 | unknown | ['No face detected']
+2026-02-16 21:50:03.746645 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 21:57:24.914751 | unknown | ['No face detected']
+2026-02-16 21:57:30.543673 | unknown | ['No face detected']
+2026-02-16 21:57:37.545864 | unknown | ['No face detected']
+2026-02-16 21:57:41.062394 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 21:57:44.538560 | unknown | ['No face detected']
+2026-02-16 21:57:44.589545 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 21:57:46.753594 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:01:37.436040 | unknown | ['No face detected']
+2026-02-16 22:01:43.376328 | unknown | ['No face detected']
+2026-02-16 22:01:50.344134 | unknown | ['No face detected']
+2026-02-16 22:01:57.342631 | unknown | ['No face detected']
+2026-02-16 22:02:04.409517 | unknown | ['No face detected']
+2026-02-16 22:02:21.000104 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:02:25.361279 | unknown | ['No face detected']
+2026-02-16 22:02:26.164969 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:02:30.528221 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:04:20.246299 | unknown | ['No face detected']
+2026-02-16 22:04:27.262492 | unknown | ['No face detected']
+2026-02-16 22:04:34.269375 | unknown | ['No face detected']
+2026-02-16 22:04:38.041157 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:05:17.533988 | unknown | ['No face detected']
+2026-02-16 22:05:23.560031 | unknown | ['No face detected']
+2026-02-16 22:05:29.686905 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:07:11.421636 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:07:33.912141 | ibrahim12hal@gmail.com | ['Suspicious behavior: Eyes not clearly visible / Looking away']
+2026-02-16 22:07:33.920139 | ibrahim12hal@gmail.com | Suspicious behavior: Eyes not clearly visible / Looking away
+2026-02-16 22:07:43.034691 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-16 22:07:43.042242 | ibrahim12hal@gmail.com | No face detected
+2026-02-16 22:07:48.026950 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-16 22:07:48.032972 | ibrahim12hal@gmail.com | No face detected
+2026-02-16 22:07:51.923882 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:08:12.199130 | ibrahim12hal@gmail.com | ['Suspicious behavior: Eyes not clearly visible / Looking away']
+2026-02-16 22:08:12.206690 | ibrahim12hal@gmail.com | Suspicious behavior: Eyes not clearly visible / Looking away
+2026-02-16 22:08:17.196568 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-16 22:08:17.207420 | ibrahim12hal@gmail.com | No face detected
+2026-02-16 22:08:32.192901 | ibrahim12hal@gmail.com | ['Suspicious behavior: Eyes not clearly visible / Looking away']
+2026-02-16 22:08:32.198859 | ibrahim12hal@gmail.com | Suspicious behavior: Eyes not clearly visible / Looking away
+2026-02-16 22:08:38.228596 | ibrahim12hal@gmail.com | Tab switched
+2026-02-16 22:08:38.294744 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-17 19:32:38.074041 | ibrahim12hal@gmail.com | Tab switched
+2026-02-17 19:32:41.529151 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-17 19:35:27.425059 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-17 19:35:27.436594 | ibrahim12hal@gmail.com | No face detected
+2026-02-17 19:35:30.749313 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-17 19:35:30.756994 | ibrahim12hal@gmail.com | No face detected
+2026-02-17 19:35:35.771412 | ibrahim12hal@gmail.com | ['Suspicious behavior: Eyes not clearly visible / Looking away']
+2026-02-17 19:35:35.780759 | ibrahim12hal@gmail.com | Suspicious behavior: Eyes not clearly visible / Looking away
+2026-02-17 19:35:39.171186 | ibrahim12hal@gmail.com | Tab switched
+2026-02-21 13:27:58.301793 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-21 13:27:58.310516 | ibrahim12hal@gmail.com | No face detected
+2026-02-21 13:28:13.315249 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-21 13:28:13.322579 | ibrahim12hal@gmail.com | No face detected
+2026-02-21 13:28:18.305126 | ibrahim12hal@gmail.com | ['No face detected']
+2026-02-21 13:28:18.310769 | ibrahim12hal@gmail.com | No face detected
+2026-02-21 13:28:22.003962 | ibrahim12hal@gmail.com | Tab switched
+2026-02-21 14:15:31.471231 | ibrahim12@gmail.com | ['No face detected']
+2026-02-21 14:15:31.479414 | ibrahim12@gmail.com | No face detected
+2026-02-21 14:15:36.252206 | ibrahim12@gmail.com | Tab switched
+2026-02-21 14:15:38.838514 | ibrahim12@gmail.com | Tab switched
+2026-03-01 16:53:31.415421 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-01 16:53:31.425421 | ibrahim12hal@gmail.com | No face detected
+2026-03-01 16:53:34.690130 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-01 16:53:34.698126 | ibrahim12hal@gmail.com | No face detected
+2026-03-01 16:53:39.684769 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-01 16:53:39.690764 | ibrahim12hal@gmail.com | No face detected
+2026-03-01 16:53:42.942508 | ibrahim12hal@gmail.com | Tab switched
+2026-03-03 22:37:04.943746 | ibrahim12hal@gmail.com | ['Suspicious behavior: Eyes not clearly visible / Looking away']
+2026-03-03 22:37:04.951746 | ibrahim12hal@gmail.com | Suspicious behavior: Eyes not clearly visible / Looking away
+2026-03-03 22:37:13.033686 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-03 22:37:13.041692 | ibrahim12hal@gmail.com | No face detected
+2026-03-03 22:37:23.030533 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-03 22:37:23.037691 | ibrahim12hal@gmail.com | No face detected
+2026-03-03 22:37:27.656993 | ibrahim12hal@gmail.com | Tab switched
+2026-03-05 05:57:22.924105 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-05 05:57:22.932868 | ibrahim12hal@gmail.com | No face detected
+2026-03-05 05:57:26.364004 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-05 05:57:26.372006 | ibrahim12hal@gmail.com | No face detected
+2026-03-05 05:57:41.366422 | ibrahim12hal@gmail.com | ['No face detected']
+2026-03-05 05:57:41.371421 | ibrahim12hal@gmail.com | No face detected
+2026-03-05 05:57:45.525342 | ibrahim12hal@gmail.com | Tab switched
+2026-03-07 13:23:52.434809 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:23:52.444837 | ibrahim@gmail.com | No face detected
+2026-03-07 13:23:55.560843 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:23:55.573611 | ibrahim@gmail.com | No face detected
+2026-03-07 13:24:00.557539 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:24:00.573366 | ibrahim@gmail.com | No face detected
+2026-03-07 13:24:04.030031 | ibrahim@gmail.com | Tab switched
+2026-03-07 13:26:51.794525 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:26:51.808069 | ibrahim@gmail.com | No face detected
+2026-03-07 13:26:55.717992 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:26:55.732572 | ibrahim@gmail.com | No face detected
+2026-03-07 13:27:00.709095 | ibrahim@gmail.com | ['No face detected']
+2026-03-07 13:27:00.721619 | ibrahim@gmail.com | No face detected
+2026-03-07 13:27:03.035493 | ibrahim@gmail.com | Tab switched

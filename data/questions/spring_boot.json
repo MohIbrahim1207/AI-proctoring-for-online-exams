@@ -1,0 +1,112 @@
+[
+    {
+        "id": "sb1",
+        "question": "Which annotation is used to mark a main class in Spring Boot?",
+        "options": [
+            "@SpringBootApplication",
+            "@EnableAutoConfiguration",
+            "@ComponentScan",
+            "@Configuration"
+        ],
+        "answer": "@SpringBootApplication"
+    },
+    {
+        "id": "sb2",
+        "question": "Which port does Spring Boot application run on by default?",
+        "options": [
+            "8080",
+            "80",
+            "443",
+            "3000"
+        ],
+        "answer": "8080"
+    },
+    {
+        "id": "sb3",
+        "question": "Which dependency is used to create a web application in Spring Boot?",
+        "options": [
+            "spring-boot-starter-web",
+            "spring-boot-starter-data-jpa",
+            "spring-boot-starter-test",
+            "spring-boot-starter-security"
+        ],
+        "answer": "spring-boot-starter-web"
+    },
+    {
+        "id": "sb4",
+        "question": "Which annotation is used to define a Rest Controller?",
+        "options": [
+            "@RestController",
+            "@Controller",
+            "@Service",
+            "@Repository"
+        ],
+        "answer": "@RestController"
+    },
+    {
+        "id": "sb5",
+        "question": "How do you inject dependencies in Spring Boot?",
+        "options": [
+            "@Autowired",
+            "@Inject",
+            "@Import",
+            "@Include"
+        ],
+        "answer": "@Autowired"
+    },
+    {
+        "id": "sb6",
+        "question": "Which file is used for configuration properties?",
+        "options": [
+            "application.properties",
+            "config.xml",
+            "settings.json",
+            "pom.xml"
+        ],
+        "answer": "application.properties"
+    },
+    {
+        "id": "sb7",
+        "question": "What is the default embedded server in Spring Boot?",
+        "options": [
+            "Tomcat",
+            "Jetty",
+            "Undertow",
+            "Netty"
+        ],
+        "answer": "Tomcat"
+    },
+    {
+        "id": "sb8",
+        "question": "Which annotation handles HTTP GET requests?",
+        "options": [
+            "@GetMapping",
+            "@PostMapping",
+            "@RequestMapping",
+            "@Get"
+        ],
+        "answer": "@GetMapping"
+    },
+    {
+        "id": "sb9",
+        "question": "Which tool is used to build Spring Boot projects?",
+        "options": [
+            "Maven",
+            "Make",
+            "Pip",
+            "NPM"
+        ],
+        "answer": "Maven"
+    },
+    {
+        "id": "sb10",
+        "question": "What is Spring Boot Actuator used for?",
+        "options": [
+            "Monitoring and managing the application",
+            "Database connectivity",
+            "Security",
+            "Testing"
+        ],
+        "answer": "Monitoring and managing the application"
+    }
+]

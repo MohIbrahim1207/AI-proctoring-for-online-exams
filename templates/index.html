@@ -50,7 +50,7 @@
             Enter Full Screen
         </button>
 
-        <a href="/exam" class="mt-3">
+        <a href="/student-dashboard.html" class="mt-3">
             <button class="btn btn-primary mt-2">
                 Start MCQ Exam
             </button>
@@ -70,6 +70,10 @@
 
 </div>
 
+<script>
+    window.STUDENT_ID = "{{ session.get('user', 'student1') }}";
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+</script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>

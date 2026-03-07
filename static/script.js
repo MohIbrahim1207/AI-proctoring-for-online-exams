@@ -1,4 +1,5 @@
-const student_id = "student1";
+const student_id = window.STUDENT_ID || "student1";
+const csrf_token = window.CSRF_TOKEN || "";
 
 window.onload = () => {
     startWebcam();
@@ -52,6 +53,7 @@ function startSendingFrames(student_id) {
 
             fetch("/proctor/upload_frame", {
                 method: "POST",
+                headers: csrf_token ? { "X-CSRF-Token": csrf_token } : {},
                 body: formData
             })
             .then(res => res.json())

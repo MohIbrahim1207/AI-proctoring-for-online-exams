@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Monitor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .thumb { width: 160px; height: 120px; object-fit: cover; margin:6px; border:1px solid #ddd; }
+    .thumb-grid { display:flex; flex-wrap:wrap; }
+    pre.log { max-height: 300px; overflow:auto; background:#f8f9fa; padding:10px; }
+  </style>
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Teacher Monitor</h3>
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card mb-3">
+          <div class="card-header">Recent Screens</div>
+          <div class="card-body thumb-grid" id="screens">Loading...</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">Proctor Logs</div>
+          <div class="card-body"><pre class="log" id="proctorLogs">Loading...</pre></div>
+        </div>
+        <div class="card">
+          <div class="card-header">Violations</div>
+          <div class="card-body"><pre class="log" id="violations">Loading...</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    async function loadScreens(){
+      const res = await fetch('/api/uploads');
+      if (res.status === 401) {
+        window.location.href = '/';
+        return;
+      }
+      const items = await res.json();
+      const container = document.getElementById('screens');
+      container.innerHTML = '';
+      for (const it of items.slice(0,30)){
+        const img = document.createElement('img');
+        img.src = it.url;
+        img.className = 'thumb';
+        container.appendChild(img);
+      }
+      if (items.length===0) container.innerText = 'No uploads yet.';
+    }
+
+    async function loadLogs(){
+      const r1 = await fetch('/api/proctor_logs');
+      if (r1.status === 401) {
+        window.location.href = '/';
+        return;
+      }
+      const logs = await r1.json();
+      document.getElementById('proctorLogs').innerText = logs.join('\n') || 'No logs.';
+
+      const r2 = await fetch('/api/violations');
+      if (r2.status === 401) {
+        window.location.href = '/';
+        return;
+      }
+      const v = await r2.json();
+      document.getElementById('violations').innerText = v.join('\n') || 'No violations.';
+    }
+
+    loadScreens(); loadLogs();
+
+    const socket = io();
+    const refreshFromEvent = () => {
+      loadScreens();
+      loadLogs();
+    };
+
+    socket.on('frame_uploaded', refreshFromEvent);
+    socket.on('violation_detected', refreshFromEvent);
+    socket.on('manual_violation', refreshFromEvent);
+    socket.on('screen_uploaded', refreshFromEvent);
+
+    setInterval(loadScreens, 5000);
+    setInterval(loadLogs, 3000);
+  </script>
+</body>
+</html>

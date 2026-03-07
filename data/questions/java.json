@@ -1,0 +1,112 @@
+[
+    {
+        "id": "java1",
+        "question": "Which of these is not a Java primitive type?",
+        "options": [
+            "String",
+            "int",
+            "boolean",
+            "double"
+        ],
+        "answer": "String"
+    },
+    {
+        "id": "java2",
+        "question": "What is the size of an int in Java?",
+        "options": [
+            "32 bits",
+            "16 bits",
+            "64 bits",
+            "8 bits"
+        ],
+        "answer": "32 bits"
+    },
+    {
+        "id": "java3",
+        "question": "Which keyword is used to inherit a class in Java?",
+        "options": [
+            "extends",
+            "implements",
+            "inherits",
+            "using"
+        ],
+        "answer": "extends"
+    },
+    {
+        "id": "java4",
+        "question": "Which method is the entry point for a Java application?",
+        "options": [
+            "public static void main(String[] args)",
+            "public void main(String[] args)",
+            "static void main()",
+            "void main()"
+        ],
+        "answer": "public static void main(String[] args)"
+    },
+    {
+        "id": "java5",
+        "question": "Which keyword is used to access the superclass?",
+        "options": [
+            "super",
+            "this",
+            "parent",
+            "base"
+        ],
+        "answer": "super"
+    },
+    {
+        "id": "java6",
+        "question": "Java is:",
+        "options": [
+            "Platform Independent",
+            "Platform Dependent",
+            "Sequence Dependent",
+            "None"
+        ],
+        "answer": "Platform Independent"
+    },
+    {
+        "id": "java7",
+        "question": "Which collection stores unique elements?",
+        "options": [
+            "Set",
+            "List",
+            "Map",
+            "Queue"
+        ],
+        "answer": "Set"
+    },
+    {
+        "id": "java8",
+        "question": "What is the value of a boolean variable by default?",
+        "options": [
+            "false",
+            "true",
+            "null",
+            "0"
+        ],
+        "answer": "false"
+    },
+    {
+        "id": "java9",
+        "question": "Which exception is thrown when dividing by zero?",
+        "options": [
+            "ArithmeticException",
+            "NullPointerException",
+            "NumberFormatException",
+            "IOException"
+        ],
+        "answer": "ArithmeticException"
+    },
+    {
+        "id": "java10",
+        "question": "Which keyword is used to create an interface?",
+        "options": [
+            "interface",
+            "class",
+            "implements",
+            "abstract"
+        ],
+        "answer": "interface"
+    }
+]

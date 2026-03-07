@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>MCQ Exam</title>
@@ -12,8 +13,9 @@
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         #alerts {
             color: red;
             font-weight: bold;
@@ -23,166 +25,61 @@
 
 <body class="bg-light">
 
-<div class="container mt-4">
-    <h3 class="text-center mb-4">MCQ Examination</h3>
+    <div class="container mt-4">
+        <h3 class="text-center mb-4">MCQ Examination</h3>
 
-    <!-- Webcam -->
-    <div class="text-center mb-3">
-        <video id="video" width="240" autoplay muted playsinline
-               style="border:2px solid #333; border-radius:8px;"></video>
-        <p id="alerts"></p>
-    </div>
-
-    <!-- Start Button -->
-    <div class="text-center mb-3">
-        <button id="startBtn" class="btn btn-primary" onclick="startExam()">
-            Start Exam
-        </button>
-    </div>
-
-    <!-- EXAM FORM -->
-    <form id="examForm" method="POST" action="/submit_exam">
-
-        {% for q in questions %}
-        <div class="question-card">
-            <p><strong>{{ loop.index }}. {{ q.question }}</strong></p>
-
-            {% for opt in q.options %}
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="radio"
-                       name="{{ q.id }}"
-                       value="{{ opt }}"
-                       disabled
-                       required>
-                <label class="form-check-label">
-                    {{ opt }}
-                </label>
-            </div>
-            {% endfor %}
+        <!-- Webcam -->
+        <div class="text-center mb-3">
+            <video id="video" width="240" autoplay muted playsinline
+                style="border:2px solid #333; border-radius:8px;"></video>
+            <p id="micStatus" class="text-muted mb-1">Microphone monitor idle</p>
+            <p id="alerts"></p>
         </div>
-        {% endfor %}
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success mt-3" disabled id="submitBtn">
-                Submit Exam
+        <!-- Start Button -->
+        <div class="text-center mb-3">
+            <button id="startBtn" type="button" class="btn btn-primary">
+                Start Exam
             </button>
         </div>
 
+        <!-- EXAM FORM -->
+        <form id="examForm" method="POST" action="/submit_exam">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" id="studentId" value="{{ session.get('user','student_001') }}">
+            <input type="hidden" id="totalMinutes" value="{{ exam_meta['minutes'] if exam_meta else 60 }}">
+
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{{ exam_meta['name'] if exam_meta else 'Exam' }}</h4>
+                <div id="timer" class="fs-5 fw-bold">Time Left: <span id="timeRemaining">{{ exam_meta['minutes'] if
+                        exam_meta else 60 }}:00</span></div>
+            </div>
+            <div class="card-body">
+                {% for q in questions %}
+                <div class="mb-4 p-3 border rounded bg-light">
+                    <p class="fw-bold">{{ loop.index }}. {{ q.question }}</p>
+                    {% set letters = ['A','B','C','D'] %}
+                    {% for opt in q.options %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="{{ q.id }}" value="{{ opt }}"
+                            id="{{ q.id }}_{{ loop.index }}" required>
+                        <label class="form-check-label" for="{{ q.id }}_{{ loop.index }}">
+                            <strong>{{ letters[loop.index0] }}.</strong>&nbsp;{{ opt }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-success" id="submitBtn">Submit Exam</button>
+            </div>
+    </div>
+
     </form>
-</div>
+    </div>
 
-<script>
-/* ================= CONFIG ================= */
-const studentId = "student_001";
-let violationCount = 0;
-const MAX_VIOLATIONS = 3;
-
-/* ================= TAB SWITCH ================= */
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-        violationCount++;
-        alert("⚠️ Tab switching detected!");
-
-        fetch("/log_violation", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                student_id: studentId,
-                reason: "Tab switched"
-            })
-        });
-
-        checkAutoSubmit();
-    }
-});
-
-/* ================= CAMERA ================= */
-let stream;
-
-async function startCamera() {
-    stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    document.getElementById("video").srcObject = stream;
-}
-
-/* ================= SEND FRAMES ================= */
-function startProctoring() {
-    const video = document.getElementById("video");
-
-    setInterval(() => {
-        if (!video.videoWidth || !video.videoHeight) return;
-
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0);
-
-        canvas.toBlob(blob => {
-            const formData = new FormData();
-            formData.append("file", blob, "frame.jpg");
-            formData.append("student_id", studentId);
-
-            fetch("/proctor/upload_frame", {
-                method: "POST",
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.issues && data.issues.length > 0) {
-                    violationCount++;
-                    document.getElementById("alerts").innerText =
-                        "⚠️ " + data.issues.join(", ");
-
-                    fetch("/log_violation", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            student_id: studentId,
-                            reason: data.issues.join(", ")
-                        })
-                    });
-
-                    checkAutoSubmit();
-                } else {
-                    document.getElementById("alerts").innerText = "";
-                }
-            });
-        }, "image/jpeg");
-    }, 5000);
-}
-
-/* ================= START EXAM ================= */
-async function startExam() {
-    try {
-        await startCamera();
-        startProctoring();
-
-        alert("✅ Exam started. Proctoring enabled.");
-
-        document.querySelectorAll("input[type=radio]")
-            .forEach(i => i.disabled = false);
-
-        document.getElementById("submitBtn").disabled = false;
-        document.getElementById("startBtn").disabled = true;
-
-    } catch {
-        alert("❌ Camera permission is mandatory.");
-    }
-}
-
-/* ================= AUTO SUBMIT ================= */
-function checkAutoSubmit() {
-    if (violationCount >= MAX_VIOLATIONS) {
-        alert("❌ Too many violations. Exam submitted.");
-        document.getElementById("examForm").submit();
-    }
-}
-
-/* ================= REFRESH WARNING ================= */
-window.onbeforeunload = () => "Leaving will submit your exam!";
-</script>
+    <script type="module" src="{{ url_for('static', filename='take_exam.js') }}"></script>
+    <script src="{{ url_for('static', filename='exam.js') }}"></script>
 
 </body>
+
 </html>

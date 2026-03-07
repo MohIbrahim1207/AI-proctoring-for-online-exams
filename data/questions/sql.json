@@ -1,0 +1,112 @@
+[
+    {
+        "id": "sql1",
+        "question": "Which SQL statement is used to extract data from a database?",
+        "options": [
+            "SELECT",
+            "GET",
+            "OPEN",
+            "EXTRACT"
+        ],
+        "answer": "SELECT"
+    },
+    {
+        "id": "sql2",
+        "question": "Which SQL statement is used to update data in a database?",
+        "options": [
+            "UPDATE",
+            "SAVE",
+            "MODIFY",
+            "SAVE AS"
+        ],
+        "answer": "UPDATE"
+    },
+    {
+        "id": "sql3",
+        "question": "Which SQL statement is used to delete data from a database?",
+        "options": [
+            "DELETE",
+            "REMOVE",
+            "COLLAPSE",
+            "DROP"
+        ],
+        "answer": "DELETE"
+    },
+    {
+        "id": "sql4",
+        "question": "Which SQL keyword is used to sort the result-set?",
+        "options": [
+            "ORDER BY",
+            "SORT BY",
+            "GROUP BY",
+            "ARRANGE BY"
+        ],
+        "answer": "ORDER BY"
+    },
+    {
+        "id": "sql5",
+        "question": "Which operator is used to select values within a range?",
+        "options": [
+            "BETWEEN",
+            "WITHIN",
+            "RANGE",
+            "IN"
+        ],
+        "answer": "BETWEEN"
+    },
+    {
+        "id": "sql6",
+        "question": "What does the SQL constraint 'UNIQUE' do?",
+        "options": [
+            "Ensures all values in a column are different",
+            "Ensures a column cannot have NULL value",
+            "Uniquely identifies each record",
+            "Validates date format"
+        ],
+        "answer": "Ensures all values in a column are different"
+    },
+    {
+        "id": "sql7",
+        "question": "Which function returns the number of records?",
+        "options": [
+            "COUNT()",
+            "NUM()",
+            "SUM()",
+            "TOTAL()"
+        ],
+        "answer": "COUNT()"
+    },
+    {
+        "id": "sql8",
+        "question": "Which keyword is used to create a new table?",
+        "options": [
+            "CREATE TABLE",
+            "NEW TABLE",
+            "ADD TABLE",
+            "MAKE TABLE"
+        ],
+        "answer": "CREATE TABLE"
+    },
+    {
+        "id": "sql9",
+        "question": "How do you select all columns from a table named 'Users'?",
+        "options": [
+            "SELECT * FROM Users",
+            "SELECT ALL FROM Users",
+            "SELECT Users",
+            "GET Users"
+        ],
+        "answer": "SELECT * FROM Users"
+    },
+    {
+        "id": "sql10",
+        "question": "Which join returns all records when there is a match in either left or right table?",
+        "options": [
+            "FULL OUTER JOIN",
+            "LEFT JOIN",
+            "RIGHT JOIN",
+            "INNER JOIN"
+        ],
+        "answer": "FULL OUTER JOIN"
+    }
+]
