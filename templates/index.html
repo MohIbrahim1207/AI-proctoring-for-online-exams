@@ -2,70 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Online Exam Proctoring</title>
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
-
-    <style>
-        video {
-            width: 360px;
-            border: 3px solid #222;
-            border-radius: 10px;
-        }
-        #alerts {
-            font-weight: bold;
-        }
-    </style>
+    <link href="{{ url_for('static', filename='proctor-theme.css') }}" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="proctor-ui">
 
-<div class="container mt-4">
+<div class="page-shell stagger">
+    <header class="glass-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <h2>AI Proctored Exam Console</h2>
+            <div class="d-flex gap-2 mt-2">
+                <span class="metric-chip">Mode: Live Monitoring</span>
+                <span class="metric-chip">Identity: {{ session.get('user', 'student1') }}</span>
+            </div>
+        </div>
+        <span class="badge text-bg-success fs-6" id="proctorStatus">Proctoring Active</span>
+    </header>
 
-    <h2 class="text-center mb-3">Online Exam Proctoring</h2>
-
-    <div class="text-center mb-3">
-        <span class="badge bg-success" id="proctorStatus">
-            Proctoring Active
-        </span>
-    </div>
-
-    <!-- Webcam Card -->
-    <div class="card shadow p-4 text-center">
-        <h4 class="mb-3">Webcam Feed</h4>
-
-        <div class="d-flex justify-content-center">
-            <video id="video" autoplay muted></video>
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <section class="panel h-100">
+                <div class="panel-head">
+                    <h5 class="mb-0">Webcam Feed Check</h5>
+                </div>
+                <div class="panel-body text-center">
+                    <video id="video" autoplay muted class="camera-frame"></video>
+                    <p id="status" class="status-line mt-3 mb-2">Initializing webcam...</p>
+                    <p id="micPrecheck" class="status-line mb-2 text-muted">Checking microphone...</p>
+                    <div id="alerts" class="alert alert-danger mt-2 mb-3"></div>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <button class="btn btn-outline-dark" onclick="document.documentElement.requestFullscreen()">
+                            Enter Full Screen
+                        </button>
+                        <button id="continueBtn" class="btn btn-proctor" disabled>
+                            Continue to Exam
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
 
-        <p id="status" class="mt-2 text-success"></p>
-
-        <div id="alerts" class="alert alert-danger mt-3 d-none"></div>
-
-        <button class="btn btn-outline-secondary mt-3"
-                onclick="document.documentElement.requestFullscreen()">
-            Enter Full Screen
-        </button>
-
-        <a href="/student-dashboard.html" class="mt-3">
-            <button class="btn btn-primary mt-2">
-                Start MCQ Exam
-            </button>
-        </a>
-    </div>
-
-    <!-- Rules -->
-    <div class="card mt-4 p-3">
-        <h5>Exam Rules</h5>
-        <ul>
-            <li>Face must be visible at all times</li>
-            <li>No tab switching allowed</li>
-            <li>Only one candidate allowed</li>
-            <li>Violations may auto-submit exam</li>
-        </ul>
+        <div class="col-lg-5">
+            <section class="panel h-100">
+                <div class="panel-head">
+                    <h5 class="mb-0">Session Rules</h5>
+                </div>
+                <div class="panel-body">
+                    <ul class="rules-list">
+                        <li>Face must remain visible for the full exam window.</li>
+                        <li>No tab switching or application switching during attempt.</li>
+                        <li>Only one candidate should appear in front of camera.</li>
+                        <li>Audio anomalies, alerts, and repeated flags can auto-submit.</li>
+                    </ul>
+                    <hr>
+                    <p class="mb-0 text-secondary">Complete this camera check before opening the exam dashboard.</p>
+                </div>
+            </section>
+        </div>
     </div>
 
 </div>
@@ -73,6 +73,7 @@
 <script>
     window.STUDENT_ID = "{{ session.get('user', 'student1') }}";
     window.CSRF_TOKEN = "{{ csrf_token }}";
+    window.EXAM_ID = "{{ exam_id if exam_id else '' }}";
 </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 

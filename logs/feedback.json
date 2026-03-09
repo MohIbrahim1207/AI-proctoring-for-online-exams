@@ -1,0 +1,18 @@
+[
+  {
+    "id": "c73a6ca07cc4d46e",
+    "user": "report_d3f915fa@example.com",
+    "examName": "API Test Exam 250d3d",
+    "feedback": "Focus on time management and SQL joins.",
+    "teacher": "admin@example.com",
+    "timestamp": "2026-03-08T23:26:33.364250"
+  },
+  {
+    "id": "15aa2d951c6742b7",
+    "user": "report_f20bb397@example.com",
+    "examName": "API Test Exam 89e262",
+    "feedback": "Focus on time management and SQL joins.",
+    "teacher": "admin@example.com",
+    "timestamp": "2026-03-09T23:31:20.261557"
+  }
+]

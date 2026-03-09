@@ -5,37 +5,101 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teacher Monitor</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .thumb { width: 160px; height: 120px; object-fit: cover; margin:6px; border:1px solid #ddd; }
-    .thumb-grid { display:flex; flex-wrap:wrap; }
-    pre.log { max-height: 300px; overflow:auto; background:#f8f9fa; padding:10px; }
-  </style>
+  <link href="{{ url_for('static', filename='proctor-theme.css') }}" rel="stylesheet">
 </head>
-<body class="p-4">
-  <div class="container">
-    <h3>Teacher Monitor</h3>
-    <div class="row">
+<body class="proctor-ui">
+  <div class="page-shell stagger">
+    <header class="glass-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h3>Teacher Monitor</h3>
+      <div class="d-flex gap-2">
+        <span class="metric-chip">Realtime: Socket.IO</span>
+        <span class="metric-chip">Scope: Last 30 Frames</span>
+        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+      </div>
+    </header>
+    <div class="row g-3">
       <div class="col-md-8">
-        <div class="card mb-3">
-          <div class="card-header">Recent Screens</div>
-          <div class="card-body thumb-grid" id="screens">Loading...</div>
-        </div>
+        <section class="panel mb-3">
+          <div class="panel-head"><h5 class="mb-0">Recent Screens</h5></div>
+          <div class="panel-body thumb-grid" id="screens">Loading...</div>
+        </section>
       </div>
       <div class="col-md-4">
-        <div class="card mb-3">
-          <div class="card-header">Proctor Logs</div>
-          <div class="card-body"><pre class="log" id="proctorLogs">Loading...</pre></div>
-        </div>
-        <div class="card">
-          <div class="card-header">Violations</div>
-          <div class="card-body"><pre class="log" id="violations">Loading...</pre></div>
-        </div>
+        <section class="panel mb-3">
+          <div class="panel-head"><h6 class="mb-0">Proctor Logs</h6></div>
+          <div class="panel-body"><pre class="log" id="proctorLogs">Loading...</pre></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h6 class="mb-0">Violations</h6></div>
+          <div class="panel-body"><pre class="log" id="violations">Loading...</pre></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-8">
+        <section class="panel h-100">
+          <div class="panel-head d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0">Student Reports</h5>
+            <small class="text-muted">Scores, alerts, and latest feedback</small>
+          </div>
+          <div class="panel-body p-0">
+            <div class="table-responsive">
+              <table class="table table-bordered proctor-table mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Student</th>
+                    <th>Exam</th>
+                    <th>Score</th>
+                    <th>%</th>
+                    <th>Alerts</th>
+                    <th>Status</th>
+                    <th>Latest Feedback</th>
+                  </tr>
+                </thead>
+                <tbody id="studentReportsTable">
+                  <tr><td colspan="7" class="text-center">Loading reports...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-lg-4">
+        <section class="panel mb-3">
+          <div class="panel-head"><h6 class="mb-0">Add Feedback</h6></div>
+          <div class="panel-body">
+            <form id="feedbackForm" class="d-grid gap-2">
+              <input class="form-control" id="feedbackUser" placeholder="Student email" required>
+              <input class="form-control" id="feedbackExam" placeholder="Exam name" required>
+              <textarea class="form-control" id="feedbackText" rows="4" placeholder="Improvement feedback" required></textarea>
+              <button type="submit" class="btn btn-proctor btn-sm">Save Feedback</button>
+            </form>
+            <small id="feedbackStatus" class="text-muted"></small>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h6 class="mb-0">Recent Feedback</h6></div>
+          <div class="panel-body"><pre class="log" id="feedbackLog">Loading...</pre></div>
+        </section>
       </div>
     </div>
   </div>
 
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>
+    const csrfToken = "{{ csrf_token }}";
+
+    function csrfHeaders(extraHeaders = {}) {
+      const headers = { ...extraHeaders };
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+      return headers;
+    }
+
     async function loadScreens(){
       const res = await fetch('/api/uploads');
       if (res.status === 401) {
@@ -72,12 +136,103 @@
       document.getElementById('violations').innerText = v.join('\n') || 'No violations.';
     }
 
-    loadScreens(); loadLogs();
+    function renderReportRows(rows) {
+      const table = document.getElementById('studentReportsTable');
+      table.innerHTML = '';
+
+      if (!rows || rows.length === 0) {
+        table.innerHTML = '<tr><td colspan="7" class="text-center">No student reports yet.</td></tr>';
+        return;
+      }
+
+      for (const row of rows) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.user || ''}</td>
+          <td>${row.examName || ''}</td>
+          <td>${row.score ?? 0}/${row.totalMarks ?? 0}</td>
+          <td>${row.percentage ?? 0}%</td>
+          <td>${row.alertsCount ?? 0}</td>
+          <td>${row.status || ''}</td>
+          <td>${row.latestFeedback || '-'}</td>
+        `;
+
+        tr.addEventListener('click', () => {
+          document.getElementById('feedbackUser').value = row.user || '';
+          document.getElementById('feedbackExam').value = row.examName || '';
+        });
+
+        table.appendChild(tr);
+      }
+    }
+
+    async function loadStudentReports() {
+      const res = await fetch('/api/teacher/student_reports');
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = '/';
+        return;
+      }
+      const rows = await res.json();
+      renderReportRows(rows);
+    }
+
+    async function loadFeedbackLog() {
+      const res = await fetch('/api/teacher/feedbacks');
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = '/';
+        return;
+      }
+      const entries = await res.json();
+      const lines = entries.slice(0, 30).map((f) => {
+        return `[${new Date(f.timestamp).toLocaleString()}] ${f.teacher} -> ${f.user} (${f.examName}): ${f.feedback}`;
+      });
+      document.getElementById('feedbackLog').innerText = lines.join('\n') || 'No feedback yet.';
+    }
+
+    async function submitFeedback(event) {
+      event.preventDefault();
+      const status = document.getElementById('feedbackStatus');
+      status.innerText = 'Saving...';
+
+      const payload = {
+        user: document.getElementById('feedbackUser').value.trim(),
+        examName: document.getElementById('feedbackExam').value.trim(),
+        feedback: document.getElementById('feedbackText').value.trim(),
+      };
+
+      try {
+        const res = await fetch('/api/teacher/feedback', {
+          method: 'POST',
+          headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          throw new Error('Could not save feedback');
+        }
+
+        document.getElementById('feedbackText').value = '';
+        status.innerText = 'Feedback saved.';
+        await loadStudentReports();
+        await loadFeedbackLog();
+      } catch (err) {
+        console.error(err);
+        status.innerText = 'Failed to save feedback.';
+      }
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', submitFeedback);
+
+    loadScreens();
+    loadLogs();
+    loadStudentReports();
+    loadFeedbackLog();
 
     const socket = io();
     const refreshFromEvent = () => {
       loadScreens();
       loadLogs();
+      loadStudentReports();
     };
 
     socket.on('frame_uploaded', refreshFromEvent);
@@ -87,6 +242,7 @@
 
     setInterval(loadScreens, 5000);
     setInterval(loadLogs, 3000);
+    setInterval(loadStudentReports, 7000);
   </script>
 </body>
 </html>

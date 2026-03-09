@@ -1,620 +1,213 @@
 [
   {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771258797.007054.jpg",
-    "timestamp": "2026-02-16T21:49:59.632172"
+    "file": "uploads/ibrahimgmail.com_1772965147.238069.jpg",
+    "timestamp": "2026-03-08T15:49:07.276956"
   },
   {
-    "user": "ibrahim12hal@gmail.com",
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T15:49:07.310451"
+  },
+  {
+    "user": "ibrahim@gmail.com",
     "reason": "Tab switched",
-    "timestamp": "2026-02-16T21:50:03.747651"
+    "timestamp": "2026-03-08T15:49:09.322446"
   },
   {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771259243.523229.jpg",
-    "timestamp": "2026-02-16T21:57:24.897698"
+    "file": "uploads/ibrahimgmail.com_1772967454.610421.jpg",
+    "timestamp": "2026-03-08T16:27:36.096626"
   },
   {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:27:36.108669"
+  },
+  {
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771259250.4947.jpg",
-    "timestamp": "2026-02-16T21:57:30.530660"
+    "file": "uploads/ibrahimgmail.com_1772967459.55652.jpg",
+    "timestamp": "2026-03-08T16:27:39.588737"
   },
   {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:27:39.607104"
+  },
+  {
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771259257.496456.jpg",
-    "timestamp": "2026-02-16T21:57:37.531271"
+    "file": "uploads/ibrahimgmail.com_1772967464.563536.jpg",
+    "timestamp": "2026-03-08T16:27:44.600392"
   },
   {
-    "user": "ibrahim12hal@gmail.com",
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:27:44.620487"
+  },
+  {
+    "user": "ibrahim@gmail.com",
     "reason": "Tab switched",
-    "timestamp": "2026-02-16T21:57:41.062394"
+    "timestamp": "2026-03-08T16:27:48.176553"
   },
   {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771259264.499359.jpg",
-    "timestamp": "2026-02-16T21:57:44.526367"
+    "file": "uploads/ibrahimgmail.com_1772967482.887889.jpg",
+    "timestamp": "2026-03-08T16:28:02.924543"
   },
   {
-    "user": "ibrahim12hal@gmail.com",
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:28:02.945080"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "issues": [
+      "No face detected"
+    ],
+    "file": "uploads/ibrahimgmail.com_1772967492.888622.jpg",
+    "timestamp": "2026-03-08T16:28:12.927696"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:28:12.948773"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "issues": [
+      "No face detected"
+    ],
+    "file": "uploads/ibrahimgmail.com_1772967497.882918.jpg",
+    "timestamp": "2026-03-08T16:28:17.914889"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:28:17.937318"
+  },
+  {
+    "user": "ibrahim@gmail.com",
     "reason": "Tab switched",
-    "timestamp": "2026-02-16T21:57:44.589545"
+    "timestamp": "2026-03-08T16:28:22.561509"
   },
   {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T21:57:46.754590"
-  },
-  {
-    "user": "unknown",
+    "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/unknown_1771259496.334092.jpg",
-    "timestamp": "2026-02-16T22:01:37.434041"
+    "file": "uploads/ibrahimgmail.com_1772967604.571418.jpg",
+    "timestamp": "2026-03-08T16:30:04.611468"
   },
   {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259503.314692.jpg",
-    "timestamp": "2026-02-16T22:01:43.357329"
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T16:30:04.634801"
   },
   {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259510.302558.jpg",
-    "timestamp": "2026-02-16T22:01:50.327577"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259517.303312.jpg",
-    "timestamp": "2026-02-16T22:01:57.328106"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259524.324889.jpg",
-    "timestamp": "2026-02-16T22:02:04.382153"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:02:21.000104"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259545.301179.jpg",
-    "timestamp": "2026-02-16T22:02:25.342089"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:02:26.164969"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:02:30.529225"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259660.210681.jpg",
-    "timestamp": "2026-02-16T22:04:20.244249"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259667.209685.jpg",
-    "timestamp": "2026-02-16T22:04:27.248763"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259674.21515.jpg",
-    "timestamp": "2026-02-16T22:04:34.254865"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:04:38.042347"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259716.531934.jpg",
-    "timestamp": "2026-02-16T22:05:17.531987"
-  },
-  {
-    "user": "unknown",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/unknown_1771259723.523657.jpg",
-    "timestamp": "2026-02-16T22:05:23.546348"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:05:29.687919"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:07:11.422730"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
+    "user": "ibrahim@gmail.com",
     "issues": [
       "Suspicious behavior: Eyes not clearly visible / Looking away"
     ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259852.969586.jpg",
-    "timestamp": "2026-02-16T22:07:33.892291"
+    "file": "uploads/ibrahimgmail.com_1772967619.564695.jpg",
+    "timestamp": "2026-03-08T16:30:19.612331"
   },
   {
-    "user": "ibrahim12hal@gmail.com",
+    "user": "ibrahim@gmail.com",
     "reason": "Suspicious behavior: Eyes not clearly visible / Looking away",
-    "timestamp": "2026-02-16T22:07:33.921142"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259862.979651.jpg",
-    "timestamp": "2026-02-16T22:07:43.014163"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-16T22:07:43.043241"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259867.974087.jpg",
-    "timestamp": "2026-02-16T22:07:48.008447"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-16T22:07:48.033972"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:07:51.924888"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "Suspicious behavior: Eyes not clearly visible / Looking away"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259892.134895.jpg",
-    "timestamp": "2026-02-16T22:08:12.183092"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Suspicious behavior: Eyes not clearly visible / Looking away",
-    "timestamp": "2026-02-16T22:08:12.206690"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259897.130045.jpg",
-    "timestamp": "2026-02-16T22:08:17.177396"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-16T22:08:17.208420"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "Suspicious behavior: Eyes not clearly visible / Looking away"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259912.127516.jpg",
-    "timestamp": "2026-02-16T22:08:32.177234"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Suspicious behavior: Eyes not clearly visible / Looking away",
-    "timestamp": "2026-02-16T22:08:32.199879"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-16T22:08:38.229588"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771259918.21233.jpg",
-    "timestamp": "2026-02-16T22:08:38.267722"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-17T19:32:38.075193"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771336958.090621.jpg",
-    "timestamp": "2026-02-17T19:32:41.506887"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771337125.727729.jpg",
-    "timestamp": "2026-02-17T19:35:27.421939"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-17T19:35:27.436594"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771337130.698897.jpg",
-    "timestamp": "2026-02-17T19:35:30.731001"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-17T19:35:30.756994"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "Suspicious behavior: Eyes not clearly visible / Looking away"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771337135.71041.jpg",
-    "timestamp": "2026-02-17T19:35:35.751657"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Suspicious behavior: Eyes not clearly visible / Looking away",
-    "timestamp": "2026-02-17T19:35:35.781768"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-17T19:35:39.171186"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771660678.271531.jpg",
-    "timestamp": "2026-02-21T13:27:58.298277"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-21T13:27:58.311515"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771660693.272636.jpg",
-    "timestamp": "2026-02-21T13:28:13.299636"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-21T13:28:13.322579"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1771660698.26725.jpg",
-    "timestamp": "2026-02-21T13:28:18.291131"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-21T13:28:18.312352"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-21T13:28:22.003962"
-  },
-  {
-    "user": "ibrahim12@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12@gmail.com_1771663531.440858.jpg",
-    "timestamp": "2026-02-21T14:15:31.466226"
-  },
-  {
-    "user": "ibrahim12@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-02-21T14:15:31.479414"
-  },
-  {
-    "user": "ibrahim12@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-21T14:15:36.252206"
-  },
-  {
-    "user": "ibrahim12@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-02-21T14:15:38.839509"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772364209.678744.jpg",
-    "timestamp": "2026-03-01T16:53:31.395419"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-01T16:53:31.425421"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772364214.634593.jpg",
-    "timestamp": "2026-03-01T16:53:34.670603"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-01T16:53:34.698126"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772364219.64121.jpg",
-    "timestamp": "2026-03-01T16:53:39.672229"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-01T16:53:39.691761"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-03-01T16:53:42.943510"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "Suspicious behavior: Eyes not clearly visible / Looking away"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772557623.020714.jpg",
-    "timestamp": "2026-03-03T22:37:04.940744"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Suspicious behavior: Eyes not clearly visible / Looking away",
-    "timestamp": "2026-03-03T22:37:04.952759"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772557632.998154.jpg",
-    "timestamp": "2026-03-03T22:37:13.030680"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-03T22:37:13.041692"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772557642.998534.jpg",
-    "timestamp": "2026-03-03T22:37:23.026549"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-03T22:37:23.037691"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-03-03T22:37:27.657999"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772670441.377967.jpg",
-    "timestamp": "2026-03-05T05:57:22.921110"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-05T05:57:22.932868"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772670446.321212.jpg",
-    "timestamp": "2026-03-05T05:57:26.348732"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-05T05:57:26.372006"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahim12hal@gmail.com_1772670461.320356.jpg",
-    "timestamp": "2026-03-05T05:57:41.350421"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-05T05:57:41.373011"
-  },
-  {
-    "user": "ibrahim12hal@gmail.com",
-    "reason": "Tab switched",
-    "timestamp": "2026-03-05T05:57:45.526354"
+    "timestamp": "2026-03-08T16:30:19.639136"
   },
   {
     "user": "ibrahim@gmail.com",
     "issues": [
       "No face detected"
     ],
-    "file": "uploads/ibrahimgmail.com_1772870030.547749.jpg",
-    "timestamp": "2026-03-07T13:23:52.430799"
+    "file": "uploads/ibrahimgmail.com_1772967624.568213.jpg",
+    "timestamp": "2026-03-08T16:30:24.601555"
   },
   {
     "user": "ibrahim@gmail.com",
     "reason": "No face detected",
-    "timestamp": "2026-03-07T13:23:52.444837"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahimgmail.com_1772870035.487321.jpg",
-    "timestamp": "2026-03-07T13:23:55.540544"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-07T13:23:55.573611"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahimgmail.com_1772870040.481005.jpg",
-    "timestamp": "2026-03-07T13:24:00.535599"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-07T13:24:00.574369"
+    "timestamp": "2026-03-08T16:30:24.626929"
   },
   {
     "user": "ibrahim@gmail.com",
     "reason": "Tab switched",
-    "timestamp": "2026-03-07T13:24:04.031061"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahimgmail.com_1772870210.633473.jpg",
-    "timestamp": "2026-03-07T13:26:51.781484"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-07T13:26:51.808069"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahimgmail.com_1772870215.636819.jpg",
-    "timestamp": "2026-03-07T13:26:55.692752"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-07T13:26:55.732572"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "issues": [
-      "No face detected"
-    ],
-    "file": "uploads/ibrahimgmail.com_1772870220.633936.jpg",
-    "timestamp": "2026-03-07T13:27:00.688414"
-  },
-  {
-    "user": "ibrahim@gmail.com",
-    "reason": "No face detected",
-    "timestamp": "2026-03-07T13:27:00.721619"
+    "timestamp": "2026-03-08T16:30:28.059314"
   },
   {
     "user": "ibrahim@gmail.com",
     "reason": "Tab switched",
-    "timestamp": "2026-03-07T13:27:03.036505"
+    "timestamp": "2026-03-08T16:31:33.023913"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T16:31:35.135317"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T16:31:37.249544"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "issues": [
+      "No face detected"
+    ],
+    "file": "uploads/ibrahimgmail.com_1772990868.896773.jpg",
+    "timestamp": "2026-03-08T22:57:48.921407"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-08T22:57:48.940199"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T22:57:53.843954"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T22:58:44.581819"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T22:58:49.061641"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-08T23:01:56.936953"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "issues": [
+      "No face detected"
+    ],
+    "file": "uploads/ibrahimgmail.com_1773078722.628918.jpg",
+    "timestamp": "2026-03-09T23:22:02.669468"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "No face detected",
+    "timestamp": "2026-03-09T23:22:02.687157"
   }
 ]

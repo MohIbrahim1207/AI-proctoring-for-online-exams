@@ -6,6 +6,89 @@ function appendCell(tr, value) {
   tr.appendChild(td);
 }
 
+function csrfHeaders(extraHeaders = {}) {
+  const headers = { ...extraHeaders };
+  const csrfToken = window.CSRF_TOKEN || '';
+  if (csrfToken) {
+    headers['X-CSRF-Token'] = csrfToken;
+  }
+  return headers;
+}
+
+async function exitActiveTest() {
+  const confirmed = window.confirm('Exit your active test now? This attempt will be closed.');
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/exam/exit', {
+      method: 'POST',
+      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({}),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to exit active test');
+    }
+
+    await loadActiveAttempt();
+    await loadDashboard();
+    alert('Active test exited.');
+  } catch (err) {
+    console.error(err);
+    alert('Unable to exit active test right now.');
+  }
+}
+
+async function loadActiveAttempt() {
+  const section = document.getElementById('activeAttemptSection');
+  const body = document.getElementById('activeAttemptBody');
+  if (!section || !body) {
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/active_attempt');
+    if (res.status === 401) {
+      window.location.href = '/';
+      return;
+    }
+    if (!res.ok) {
+      throw new Error('Failed to fetch active attempt');
+    }
+
+    const payload = await res.json();
+    if (!payload || !payload.active) {
+      section.style.display = 'none';
+      body.textContent = '';
+      return;
+    }
+
+    const started = payload.active.started_at
+      ? new Date(payload.active.started_at).toLocaleString()
+      : 'Unknown';
+
+    section.style.display = '';
+    body.innerHTML = '';
+
+    const examInfo = document.createElement('p');
+    examInfo.className = 'mb-2';
+    examInfo.textContent = `Exam: ${payload.active.exam_name} | Started: ${started}`;
+    body.appendChild(examInfo);
+
+    const exitBtn = document.createElement('button');
+    exitBtn.className = 'btn btn-outline-danger btn-sm';
+    exitBtn.textContent = 'Exit Test';
+    exitBtn.addEventListener('click', exitActiveTest);
+    body.appendChild(exitBtn);
+  } catch (err) {
+    console.error(err);
+    section.style.display = 'none';
+    body.textContent = '';
+  }
+}
+
 async function loadDashboard() {
   try {
     const res = await fetch('/api/results');
@@ -81,7 +164,7 @@ async function loadAvailableExams() {
       const link = document.createElement('a');
       link.className = 'btn btn-primary btn-sm';
       link.textContent = 'Take Exam';
-      link.href = `/exam?id=${encodeURIComponent(exam.id)}`;
+      link.href = `/precheck?id=${encodeURIComponent(exam.id)}`;
       actionTd.appendChild(link);
       tr.appendChild(actionTd);
 
@@ -95,3 +178,4 @@ async function loadAvailableExams() {
 
 loadDashboard();
 loadAvailableExams();
+loadActiveAttempt();

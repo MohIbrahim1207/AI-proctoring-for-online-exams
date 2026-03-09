@@ -3,45 +3,23 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MCQ Exam</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        .question-card {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        #alerts {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+    <link href="{{ url_for('static', filename='proctor-theme.css') }}" rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="proctor-ui">
 
-    <div class="container mt-4">
-        <h3 class="text-center mb-4">MCQ Examination</h3>
-
-        <!-- Webcam -->
-        <div class="text-center mb-3">
-            <video id="video" width="240" autoplay muted playsinline
-                style="border:2px solid #333; border-radius:8px;"></video>
-            <p id="micStatus" class="text-muted mb-1">Microphone monitor idle</p>
-            <p id="alerts"></p>
-        </div>
-
-        <!-- Start Button -->
-        <div class="text-center mb-3">
-            <button id="startBtn" type="button" class="btn btn-primary">
-                Start Exam
-            </button>
-        </div>
+    <div class="page-shell stagger">
+        <header class="glass-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h3>{{ exam_meta['name'] if exam_meta else 'MCQ Examination' }}</h3>
+            <div class="d-flex gap-2">
+                <span class="metric-chip">Candidate: {{ session.get('user','student_001') }}</span>
+                <span class="metric-chip">Question <span id="qIndex" class="ms-1">-</span></span>
+            </div>
+        </header>
 
         <!-- EXAM FORM -->
         <form id="examForm" method="POST" action="/submit_exam">
@@ -49,32 +27,75 @@
             <input type="hidden" id="studentId" value="{{ session.get('user','student_001') }}">
             <input type="hidden" id="totalMinutes" value="{{ exam_meta['minutes'] if exam_meta else 60 }}">
 
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">{{ exam_meta['name'] if exam_meta else 'Exam' }}</h4>
-                <div id="timer" class="fs-5 fw-bold">Time Left: <span id="timeRemaining">{{ exam_meta['minutes'] if
-                        exam_meta else 60 }}:00</span></div>
-            </div>
-            <div class="card-body">
-                {% for q in questions %}
-                <div class="mb-4 p-3 border rounded bg-light">
-                    <p class="fw-bold">{{ loop.index }}. {{ q.question }}</p>
-                    {% set letters = ['A','B','C','D'] %}
-                    {% for opt in q.options %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="{{ q.id }}" value="{{ opt }}"
-                            id="{{ q.id }}_{{ loop.index }}" required>
-                        <label class="form-check-label" for="{{ q.id }}_{{ loop.index }}">
-                            <strong>{{ letters[loop.index0] }}.</strong>&nbsp;{{ opt }}
-                        </label>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-success" id="submitBtn">Submit Exam</button>
-            </div>
-    </div>
+            <div class="row g-3">
+                <div class="col-lg-4">
+                    <section class="panel h-100">
+                        <div class="panel-head">
+                            <h5 class="mb-0">Proctor Monitor</h5>
+                        </div>
+                        <div class="panel-body text-center">
+                            <video id="video" class="camera-frame" autoplay muted playsinline></video>
+                            <p id="micStatus" class="text-muted mt-3 mb-2">Microphone monitor idle</p>
+                            <div id="alerts" class="alert alert-danger mb-3"></div>
 
-    </form>
+                            <div class="text-start mb-2">
+                                <label for="cameraSelect" class="form-label mb-1">Camera Device</label>
+                                <select id="cameraSelect" class="form-select form-select-sm"></select>
+                            </div>
+                            <div class="text-start mb-3">
+                                <label for="micSelect" class="form-label mb-1">Microphone Device</label>
+                                <select id="micSelect" class="form-select form-select-sm"></select>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button id="startBtn" type="button" class="btn btn-proctor">Start Exam</button>
+                                <button id="retryMediaBtn" type="button" class="btn btn-outline-secondary">Retry Camera/Mic</button>
+                                <button type="button" class="btn btn-outline-dark" onclick="document.documentElement.requestFullscreen()">
+                                    Enter Full Screen
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-lg-8">
+                    <section class="panel h-100">
+                        <div class="panel-head d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h5 class="mb-0">Questions</h5>
+                            <div id="timer" class="fw-bold">Time Left: <span id="timeRemaining">{{ exam_meta['minutes'] if exam_meta else 60 }}:00</span></div>
+                        </div>
+                        <div class="panel-body">
+                            {% for q in questions %}
+                            <div class="question-card">
+                                <p class="fw-bold mb-2"><span class="question-index">Q{{ loop.index }}</span>{{ q.question }}</p>
+                                {% set letters = ['A','B','C','D'] %}
+                                {% for opt in q.options %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="{{ q.id }}" value="{{ opt }}"
+                                        id="{{ q.id }}_{{ loop.index }}" required>
+                                    <label class="form-check-label" for="{{ q.id }}_{{ loop.index }}">
+                                        <strong>{{ letters[loop.index0] }}.</strong>&nbsp;{{ opt }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+
+                            <div class="d-flex justify-content-between flex-wrap gap-2 mt-3">
+                                <div>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="prevQuestion()">Previous</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="nextQuestion()">Next</button>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-danger" id="exitTestBtn">Exit Test</button>
+                                    <button type="submit" class="btn btn-success" id="submitBtn">Submit Exam</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </form>
     </div>
 
     <script type="module" src="{{ url_for('static', filename='take_exam.js') }}"></script>

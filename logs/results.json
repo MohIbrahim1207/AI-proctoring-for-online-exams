@@ -223,5 +223,221 @@
     "score": 0,
     "status": "Completed",
     "timestamp": "2026-03-07T13:27:02.982457"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "MCQ Exam",
+    "allottedTime": 60,
+    "totalMarks": 2,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "timestamp": "2026-03-08T15:49:09.363455"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Completed",
+    "timestamp": "2026-03-08T16:27:48.145539"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "SQL",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Completed",
+    "timestamp": "2026-03-08T16:28:22.527508"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Completed",
+    "timestamp": "2026-03-08T16:30:28.010748"
+  },
+  {
+    "user": "testuser_6000b15e@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "acb3d11e309366890074424e0a2a2a36",
+    "timestamp": "2026-03-08T16:37:49.681263"
+  },
+  {
+    "user": "dup_a8592b09@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "b3df5bd15a049eb0d0baf6b06b5b303a",
+    "timestamp": "2026-03-08T16:37:50.130669"
+  },
+  {
+    "user": "testuser_8a90d8d5@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "4df19b7f0ac7ce0c3b803b2b5369402d",
+    "timestamp": "2026-03-08T22:31:05.678142"
+  },
+  {
+    "user": "dup_d4425066@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "b3b870cb05b8b04dcc5e8c8ad585b51e",
+    "timestamp": "2026-03-08T22:31:06.115147"
+  },
+  {
+    "user": "exit_47775a89@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "fa029bc94551b42c6d936be01c257542",
+    "timestamp": "2026-03-08T22:31:06.524156"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "RDBMS",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "2488c405e7efbe59976c6592221d77ed",
+    "timestamp": "2026-03-08T22:57:48.972373"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "SQL",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "50f0ad083d9bf6df0b7cdea5ef51f5de",
+    "timestamp": "2026-03-08T22:58:44.606825"
+  },
+  {
+    "user": "testuser_ee80a056@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "4ef739a2d487410a2b79a24ecfc72674",
+    "timestamp": "2026-03-08T23:00:43.936205"
+  },
+  {
+    "user": "dup_704ce402@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "7a10f99b67932ec929c48c2124286c4c",
+    "timestamp": "2026-03-08T23:00:44.278571"
+  },
+  {
+    "user": "exit_318a1ac4@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "a9a8bd6a14475e80f1401abc863ee6d0",
+    "timestamp": "2026-03-08T23:00:44.627954"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "1d1bb3b73b39ad27c18676e1cf8d6bc4",
+    "timestamp": "2026-03-08T23:01:47.453220"
+  },
+  {
+    "user": "testuser_a33a78d8@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "744675fa26d83e9d2b8d2a628db2ba8d",
+    "timestamp": "2026-03-08T23:26:32.385675"
+  },
+  {
+    "user": "dup_e5e2042a@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "38e1d87b4cce55686d14dc85a9f4b234",
+    "timestamp": "2026-03-08T23:26:32.771726"
+  },
+  {
+    "user": "exit_9c8c763d@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "b2efd80ccb36f91c7927ad227e088fb9",
+    "timestamp": "2026-03-08T23:26:33.176223"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "5a2629005cd140ecda77cbdc0ceb840b",
+    "timestamp": "2026-03-09T23:22:02.733931"
+  },
+  {
+    "user": "testuser_1c032aa8@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "18c54933c462bd2e6033fe2dde90d973",
+    "timestamp": "2026-03-09T23:31:19.362346"
+  },
+  {
+    "user": "dup_5aaab645@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "ecbcff3013af8c0bc6c7b3bf424cde98",
+    "timestamp": "2026-03-09T23:31:19.725987"
+  },
+  {
+    "user": "exit_98210239@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "55e039a650d444ff2d142efe09312f14",
+    "timestamp": "2026-03-09T23:31:20.090191"
   }
 ]

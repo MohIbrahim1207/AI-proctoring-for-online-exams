@@ -7,6 +7,7 @@ import cv2
 import os
 import json
 import secrets
+import threading
 from flask import send_from_directory, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -90,6 +91,91 @@ if not os.path.exists(RESULTS_FILE):
     with open(RESULTS_FILE, "w") as f:
         json.dump([], f)
 
+ATTEMPTS_FILE = os.path.join("logs", "attempts.json")
+if not os.path.exists(ATTEMPTS_FILE):
+    with open(ATTEMPTS_FILE, "w") as f:
+        json.dump([], f)
+
+FEEDBACK_FILE = os.path.join("logs", "feedback.json")
+if not os.path.exists(FEEDBACK_FILE):
+    with open(FEEDBACK_FILE, "w") as f:
+        json.dump([], f)
+
+PRECHECK_TTL_SECONDS = int(os.environ.get("PRECHECK_TTL_SECONDS", "300"))
+ATTEMPTS_LOCK = threading.Lock()
+USER_SOFT_VIOLATION_STREAKS = {}
+
+# Eye tracking tuning knobs. These are conservative defaults aimed at reducing
+# false positives from brief blinks, lighting changes, or transient detector misses.
+EYE_REGION_TOP_RATIO = 0.72
+EYE_MISSING_STREAK_THRESHOLD = 4
+EYE_AWAY_STREAK_THRESHOLD = 5
+EYE_ALERT_COOLDOWN_SECONDS = 6
+GAZE_CENTER_MIN_RATIO = 0.32
+GAZE_CENTER_MAX_RATIO = 0.68
+MIN_INTER_EYE_DISTANCE_RATIO = 0.12
+
+
+def _eye_tracking_metrics(eyes, face_w, face_h):
+    """Return lightweight gaze metrics from Haar eye boxes inside a detected face."""
+    if face_w <= 0 or face_h <= 0:
+        return {
+            "usable_eyes": 0,
+            "gaze_ratio": 0.5,
+            "inter_eye_ratio": 0.0,
+            "looking_away": False,
+            "direction": "center",
+        }
+
+    eye_region_limit = int(face_h * EYE_REGION_TOP_RATIO)
+    usable = []
+    for (ex, ey, ew, eh) in eyes:
+        if ey + eh > eye_region_limit:
+            continue
+        if ew < 10 or eh < 10:
+            continue
+        usable.append((ex, ey, ew, eh))
+
+    if len(usable) < 2:
+        return {
+            "usable_eyes": len(usable),
+            "gaze_ratio": 0.5,
+            "inter_eye_ratio": 0.0,
+            "looking_away": False,
+            "direction": "center",
+        }
+
+    usable.sort(key=lambda r: r[2] * r[3], reverse=True)
+    top_two = sorted(usable[:2], key=lambda r: r[0] + (r[2] / 2.0))
+    left, right = top_two
+    left_center_x = left[0] + (left[2] / 2.0)
+    right_center_x = right[0] + (right[2] / 2.0)
+
+    gaze_ratio = (left_center_x + right_center_x) / (2.0 * face_w)
+    inter_eye_ratio = abs(right_center_x - left_center_x) / float(face_w)
+    looking_away = (
+        inter_eye_ratio >= MIN_INTER_EYE_DISTANCE_RATIO
+        and (gaze_ratio < GAZE_CENTER_MIN_RATIO or gaze_ratio > GAZE_CENTER_MAX_RATIO)
+    )
+    if gaze_ratio < GAZE_CENTER_MIN_RATIO:
+        direction = "left"
+    elif gaze_ratio > GAZE_CENTER_MAX_RATIO:
+        direction = "right"
+    else:
+        direction = "center"
+
+    return {
+        "usable_eyes": len(usable),
+        "gaze_ratio": gaze_ratio,
+        "inter_eye_ratio": inter_eye_ratio,
+        "looking_away": looking_away,
+        "direction": direction,
+    }
+
+
+def _alert_ready(last_ts, now_ts):
+    return (now_ts - float(last_ts or 0.0)) >= EYE_ALERT_COOLDOWN_SECONDS
+
 # users storage (JSON)
 DATA_DIR = os.path.join(os.getcwd(), 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -137,6 +223,88 @@ def _firebase_results_to_list(payload):
     if isinstance(payload, dict):
         return [v for v in payload.values() if isinstance(v, dict)]
     return []
+
+
+def _safe_read_json_file(path, default):
+    try:
+        with open(path, "r") as f:
+            return json.load(f)
+    except Exception:
+        return default
+
+
+def _safe_write_json_file(path, payload):
+    with open(path, "w") as f:
+        json.dump(payload, f, indent=2)
+
+
+def load_attempts():
+    with ATTEMPTS_LOCK:
+        return _safe_read_json_file(ATTEMPTS_FILE, [])
+
+
+def save_attempts(attempts):
+    with ATTEMPTS_LOCK:
+        _safe_write_json_file(ATTEMPTS_FILE, attempts)
+
+
+def _find_active_attempt(attempts, user, exam_id=None):
+    for attempt in reversed(attempts):
+        if attempt.get("user") != user:
+            continue
+        if attempt.get("status") != "active":
+            continue
+        if exam_id and attempt.get("exam_id") != exam_id:
+            continue
+        return attempt
+    return None
+
+
+def create_attempt(user, exam_meta):
+    attempt = {
+        "attempt_id": secrets.token_hex(16),
+        "user": user,
+        "exam_id": exam_meta["id"],
+        "exam_name": exam_meta["name"],
+        "minutes": exam_meta["minutes"],
+        "status": "active",
+        "seed": int(time.time()),
+        "started_at": datetime.now().isoformat(),
+        "submitted_at": None,
+    }
+    attempts = load_attempts()
+    attempts.append(attempt)
+    save_attempts(attempts)
+    return attempt
+
+
+def finalize_attempt(attempt_id, *, status, score=None, total_marks=None):
+    attempts = load_attempts()
+    updated = None
+    for attempt in attempts:
+        if attempt.get("attempt_id") == attempt_id:
+            if attempt.get("status") != "active":
+                return attempt
+            attempt["status"] = status
+            attempt["submitted_at"] = datetime.now().isoformat()
+            if score is not None:
+                attempt["score"] = score
+            if total_marks is not None:
+                attempt["totalMarks"] = total_marks
+            updated = attempt
+            break
+
+    if updated:
+        save_attempts(attempts)
+    return updated
+
+
+def load_feedbacks():
+    return _safe_read_json_file(FEEDBACK_FILE, [])
+
+
+def save_feedbacks(feedbacks):
+    _safe_write_json_file(FEEDBACK_FILE, feedbacks)
 
 
 def load_users():
@@ -330,6 +498,50 @@ def student_dashboard():
     return render_template("dashboard.html")
 
 
+@app.route("/precheck")
+def precheck():
+    if "user" not in session or session.get("role") != "student":
+        return redirect(url_for("login"))
+
+    exam_id = request.args.get("id", "").strip()
+    exam_meta = next((x for x in AVAILABLE_EXAMS if x["id"] == exam_id), None)
+    if not exam_meta:
+        return redirect(url_for("student_dashboard"))
+
+    return render_template("index.html", exam_meta=exam_meta, exam_id=exam_id)
+
+
+@app.route("/api/precheck/complete", methods=["POST"])
+def complete_precheck():
+    if "user" not in session or session.get("role") != "student":
+        return jsonify({"error": "Unauthorized"}), 401
+
+    payload = request.get_json(silent=True) or {}
+    exam_id = str(payload.get("exam_id", "")).strip()
+    camera_ok = bool(payload.get("camera_ok"))
+    mic_ok = bool(payload.get("mic_ok"))
+
+    exam_meta = next((x for x in AVAILABLE_EXAMS if x["id"] == exam_id), None)
+    if not exam_meta:
+        return jsonify({"error": "Invalid exam id"}), 400
+
+    if not camera_ok or not mic_ok:
+        return jsonify({"error": "Camera and microphone checks are required"}), 400
+
+    session["precheck_exam_id"] = exam_id
+    session["precheck_passed_at"] = int(time.time())
+    return jsonify({"status": "ok"})
+
+
+def clear_exam_session_context():
+    session.pop("exam_seed", None)
+    session.pop("exam_user", None)
+    session.pop("current_exam_id", None)
+    session.pop("current_attempt_id", None)
+    session.pop("precheck_exam_id", None)
+    session.pop("precheck_passed_at", None)
+
+
 # @app.route("/exam")
 # def exam():
 #     # ... (replaced)
@@ -375,24 +587,73 @@ def upload_frame():
         })
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    gray = cv2.equalizeHist(gray)
+    min_face = max(64, int(min(gray.shape[0], gray.shape[1]) * 0.12))
+    faces = face_cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.2,
+        minNeighbors=6,
+        minSize=(min_face, min_face),
+    )
+
+    user_state = USER_SOFT_VIOLATION_STREAKS.setdefault(
+        safe_student_id,
+        {
+            "no_face": 0,
+            "missing_eyes": 0,
+            "off_center": 0,
+            "last_missing_alert_ts": 0.0,
+            "last_gaze_alert_ts": 0.0,
+        },
+    )
 
     issues = []
     if len(faces) == 0:
-        issues.append("No face detected")
+        user_state["no_face"] += 1
+        user_state["missing_eyes"] = 0
+        user_state["off_center"] = 0
+        if user_state["no_face"] >= 2:
+            issues.append("No face detected")
     elif len(faces) > 1:
+        user_state["no_face"] = 0
+        user_state["missing_eyes"] = 0
+        user_state["off_center"] = 0
         issues.append("Multiple people detected! Only one candidate allowed.")
     else:
-        # One face detected - check eyes
+        user_state["no_face"] = 0
+        now_ts = time.time()
+        # One face detected - track whether both eyes are visible and roughly centered.
         for (x, y, w, h) in faces:
             roi_gray = gray[y:y+h, x:x+w]
-            eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 3)
-            if len(eyes) < 2:
-                # This can be sensitive; often one eye is detected or glasses interfere.
-                # Only warn if consistent? For now, we warn.
-                # To reduce noise, we could count violations on client side or checking history,
-                # but user asked for "precise" tracking.
-                issues.append("Suspicious behavior: Eyes not clearly visible / Looking away")
+            eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 4, minSize=(18, 18))
+
+            metrics = _eye_tracking_metrics(eyes, w, h)
+            if metrics["usable_eyes"] < 2:
+                user_state["missing_eyes"] += 1
+                user_state["off_center"] = 0
+                if (
+                    user_state["missing_eyes"] >= EYE_MISSING_STREAK_THRESHOLD
+                    and _alert_ready(user_state.get("last_missing_alert_ts", 0.0), now_ts)
+                ):
+                    issues.append(
+                        "Eye tracking alert: Eyes not clearly visible for multiple frames"
+                    )
+                    user_state["last_missing_alert_ts"] = now_ts
+            else:
+                user_state["missing_eyes"] = 0
+                if metrics["looking_away"]:
+                    user_state["off_center"] += 1
+                    if (
+                        user_state["off_center"] >= EYE_AWAY_STREAK_THRESHOLD
+                        and _alert_ready(user_state.get("last_gaze_alert_ts", 0.0), now_ts)
+                    ):
+                        issues.append(
+                            f"Eye tracking alert: Candidate looking {metrics['direction']}"
+                        )
+                        user_state["last_gaze_alert_ts"] = now_ts
+                else:
+                    # Decay slowly to avoid flapping when the detector jitters.
+                    user_state["off_center"] = max(0, user_state["off_center"] - 1)
 
     if issues:
         with open("logs/proctor_log.txt", "a") as log:
@@ -476,19 +737,33 @@ def log_violation():
     # count alerts for this student and auto-submit once when threshold reached
     user_alerts = [a for a in alerts if a.get('user') == student_id]
     auto_submitted = False
-    if len(user_alerts) == MAX_WARNINGS:
-        # perform auto-submit: create a result with score 0
-        result_entry = {
-            "user": student_id,
-            "examName": "MCQ Exam",
-            "allottedTime": 60,
-            "totalMarks": len(load_questions()),
-            "score": 0,
-            "status": "Auto-submitted (too many violations)",
-            "timestamp": datetime.now().isoformat()
-        }
-        append_result(result_entry)
-        auto_submitted = True
+    if len(user_alerts) >= MAX_WARNINGS:
+        attempts = load_attempts()
+        active_attempt = _find_active_attempt(attempts, student_id)
+        if active_attempt:
+            exam_id = active_attempt.get("exam_id")
+            exam_meta = next((x for x in AVAILABLE_EXAMS if x["id"] == exam_id), None)
+            total_marks = len(load_questions(exam_id)) if exam_id else 0
+            result_entry = {
+                "user": student_id,
+                "examName": exam_meta["name"] if exam_meta else "MCQ Exam",
+                "allottedTime": exam_meta["minutes"] if exam_meta else 60,
+                "totalMarks": total_marks,
+                "score": 0,
+                "status": "Auto-submitted (too many violations)",
+                "attempt_id": active_attempt.get("attempt_id"),
+                "timestamp": datetime.now().isoformat(),
+            }
+            append_result(result_entry)
+            updated = finalize_attempt(
+                active_attempt.get("attempt_id"),
+                status="auto_submitted",
+                score=0,
+                total_marks=total_marks,
+            )
+            auto_submitted = bool(updated)
+            if session.get("user") == student_id:
+                clear_exam_session_context()
 
     socketio.emit("manual_violation", {
         "user": student_id,
@@ -511,6 +786,68 @@ def api_results():
     return jsonify(user_results)
 
 
+@app.route("/api/active_attempt")
+def api_active_attempt():
+    if "user" not in session or session.get("role") != "student":
+        return jsonify({"error": "Unauthorized"}), 401
+
+    user = session.get("user")
+    attempts = load_attempts()
+    active_attempt = _find_active_attempt(attempts, user)
+    if not active_attempt:
+        return jsonify({"active": None})
+
+    return jsonify({
+        "active": {
+            "attempt_id": active_attempt.get("attempt_id"),
+            "exam_id": active_attempt.get("exam_id"),
+            "exam_name": active_attempt.get("exam_name"),
+            "started_at": active_attempt.get("started_at"),
+        }
+    })
+
+
+@app.route("/api/exam/exit", methods=["POST"])
+def api_exam_exit():
+    if "user" not in session or session.get("role") != "student":
+        return jsonify({"error": "Unauthorized"}), 401
+
+    user = session.get("user")
+    attempts = load_attempts()
+    active_attempt = _find_active_attempt(attempts, user)
+    if not active_attempt:
+        clear_exam_session_context()
+        return jsonify({"status": "no_active_attempt"})
+
+    attempt_id = active_attempt.get("attempt_id")
+    exam_id = active_attempt.get("exam_id")
+    total_marks = len(load_questions(exam_id)) if exam_id else 0
+    finalized = finalize_attempt(
+        attempt_id,
+        status="exited",
+        score=0,
+        total_marks=total_marks,
+    )
+
+    if finalized and finalized.get("status") == "exited":
+        existing_results = load_results()
+        already_written = any(r.get("attempt_id") == attempt_id for r in existing_results)
+        if not already_written:
+            append_result({
+                "user": user,
+                "examName": active_attempt.get("exam_name", "Unknown Exam"),
+                "allottedTime": active_attempt.get("minutes", 0),
+                "totalMarks": total_marks,
+                "score": 0,
+                "status": "Exited by student",
+                "attempt_id": attempt_id,
+                "timestamp": datetime.now().isoformat(),
+            })
+
+    clear_exam_session_context()
+    return jsonify({"status": "exited"})
+
+
 # ------------------------------
 # EXAM MANAGEMENT
 # ------------------------------
@@ -522,11 +859,7 @@ def load_results():
         except Exception as e:
             print(f"Firebase read failed, using JSON fallback: {e}")
 
-    try:
-        with open(RESULTS_FILE, "r") as f:
-            return json.load(f)
-    except Exception:
-        return []
+    return _safe_read_json_file(RESULTS_FILE, [])
 
 def save_results(results):
     if FIREBASE_ENABLED:
@@ -536,8 +869,7 @@ def save_results(results):
         except Exception as e:
             print(f"Firebase write failed, using JSON fallback: {e}")
 
-    with open(RESULTS_FILE, "w") as f:
-        json.dump(results, f, indent=2)
+    _safe_write_json_file(RESULTS_FILE, results)
 
 
 def append_result(result_entry):
@@ -622,22 +954,33 @@ def save_questions(questions_data, exam_id=None):
 def exam():
     if "user" not in session or session.get("role") != "student":
         return redirect(url_for("login"))
-    
+
+    user = session.get("user")
     exam_id = request.args.get('id')
     if not exam_id:
         return redirect(url_for('student_dashboard'))
-        
+
     exam_meta = next((x for x in AVAILABLE_EXAMS if x['id'] == exam_id), None)
     if not exam_meta:
         return redirect(url_for('student_dashboard'))
 
-    # Store exam context in session
-    # We clear seed if switching exams to ensure fresh start? 
-    # Or keep seed per exam_id? simpler: just reset seed if exam_id changes
-    if session.get('current_exam_id') != exam_id:
-        session['current_exam_id'] = exam_id
-        session['exam_seed'] = int(time.time())
-        session['exam_user'] = session.get('user')
+    precheck_exam_id = session.get("precheck_exam_id")
+    precheck_passed_at = int(session.get("precheck_passed_at", 0))
+    if precheck_exam_id != exam_id or (int(time.time()) - precheck_passed_at) > PRECHECK_TTL_SECONDS:
+        return redirect(url_for("precheck", id=exam_id))
+
+    attempts = load_attempts()
+    active_attempt = _find_active_attempt(attempts, user)
+    if active_attempt and active_attempt.get("exam_id") != exam_id:
+        return redirect(url_for("student_dashboard"))
+
+    if not active_attempt:
+        active_attempt = create_attempt(user, exam_meta)
+
+    session['current_exam_id'] = exam_id
+    session['exam_seed'] = int(active_attempt.get('seed', int(time.time())))
+    session['exam_user'] = user
+    session['current_attempt_id'] = active_attempt.get('attempt_id')
 
     seed = session.get('exam_seed')
     qs = load_questions(exam_id)
@@ -650,8 +993,23 @@ def exam():
 
 @app.route("/submit_exam", methods=["POST"])
 def submit_exam():
+    if "user" not in session or session.get("role") != "student":
+        return redirect(url_for("login"))
+
     exam_id = session.get('current_exam_id')
     if not exam_id:
+        return redirect(url_for("student_dashboard"))
+
+    user = session.get("user")
+    attempt_id = session.get("current_attempt_id")
+    attempts = load_attempts()
+    attempt = next((a for a in attempts if a.get("attempt_id") == attempt_id and a.get("user") == user), None)
+    if not attempt or attempt.get("exam_id") != exam_id:
+        clear_exam_session_context()
+        return redirect(url_for("student_dashboard"))
+
+    if attempt.get("status") != "active":
+        clear_exam_session_context()
         return redirect(url_for("student_dashboard"))
 
     exam_meta = next((x for x in AVAILABLE_EXAMS if x['id'] == exam_id), None)
@@ -679,15 +1037,19 @@ def submit_exam():
         "totalMarks": len(qs),
         "score": score,
         "status": "Completed",
+        "attempt_id": attempt_id,
         "timestamp": datetime.now().isoformat()
     }
 
     append_result(result_entry)
+    finalize_attempt(
+        attempt_id,
+        status="submitted",
+        score=score,
+        total_marks=len(qs),
+    )
 
-    # clear exam context
-    session.pop('exam_seed', None)
-    session.pop('exam_user', None)
-    session.pop('current_exam_id', None)
+    clear_exam_session_context()
 
     return redirect(url_for("student_dashboard"))
 
@@ -756,6 +1118,100 @@ def api_uploads():
     except Exception:
         pass
     return jsonify(files[:50])
+
+
+@app.route('/api/teacher/student_reports')
+def api_teacher_student_reports():
+    if 'user' not in session or session.get('role') != 'teacher':
+        return jsonify({'error': 'forbidden'}), 403
+
+    results = load_results()
+    alerts_path = os.path.join('logs', 'alerts.json')
+    alerts = _safe_read_json_file(alerts_path, [])
+    feedbacks = load_feedbacks()
+
+    alerts_count_by_user = {}
+    for a in alerts:
+        user = a.get('user')
+        if not user:
+            continue
+        alerts_count_by_user[user] = alerts_count_by_user.get(user, 0) + 1
+
+    latest_feedback_by_key = {}
+    for fb in feedbacks:
+        user = fb.get('user')
+        exam_name = fb.get('examName')
+        if not user or not exam_name:
+            continue
+        key = f"{user}::{exam_name}"
+        existing = latest_feedback_by_key.get(key)
+        if not existing or str(fb.get('timestamp', '')) > str(existing.get('timestamp', '')):
+            latest_feedback_by_key[key] = fb
+
+    rows = []
+    for r in results:
+        user = r.get('user')
+        exam_name = r.get('examName', 'Unknown Exam')
+        total_marks = int(r.get('totalMarks', 0) or 0)
+        score = int(r.get('score', 0) or 0)
+        pct = round((score / total_marks) * 100, 1) if total_marks > 0 else 0.0
+        key = f"{user}::{exam_name}"
+        latest_feedback = latest_feedback_by_key.get(key)
+
+        rows.append({
+            'user': user,
+            'examName': exam_name,
+            'score': score,
+            'totalMarks': total_marks,
+            'percentage': pct,
+            'status': r.get('status', ''),
+            'timestamp': r.get('timestamp', ''),
+            'alertsCount': alerts_count_by_user.get(user, 0),
+            'latestFeedback': latest_feedback.get('feedback') if latest_feedback else '',
+            'latestFeedbackBy': latest_feedback.get('teacher') if latest_feedback else '',
+            'latestFeedbackAt': latest_feedback.get('timestamp') if latest_feedback else '',
+        })
+
+    rows.sort(key=lambda x: str(x.get('timestamp', '')), reverse=True)
+    return jsonify(rows[:300])
+
+
+@app.route('/api/teacher/feedbacks')
+def api_teacher_feedbacks():
+    if 'user' not in session or session.get('role') != 'teacher':
+        return jsonify({'error': 'forbidden'}), 403
+
+    feedbacks = load_feedbacks()
+    feedbacks.sort(key=lambda x: str(x.get('timestamp', '')), reverse=True)
+    return jsonify(feedbacks[:300])
+
+
+@app.route('/api/teacher/feedback', methods=['POST'])
+def api_teacher_feedback_create():
+    if 'user' not in session or session.get('role') != 'teacher':
+        return jsonify({'error': 'forbidden'}), 403
+
+    payload = request.get_json(silent=True) or {}
+    user = str(payload.get('user', '')).strip()
+    exam_name = str(payload.get('examName', '')).strip()
+    feedback = str(payload.get('feedback', '')).strip()
+
+    if not user or not exam_name or not feedback:
+        return jsonify({'error': 'user, examName and feedback are required'}), 400
+
+    entry = {
+        'id': secrets.token_hex(8),
+        'user': user,
+        'examName': exam_name,
+        'feedback': feedback,
+        'teacher': session.get('user'),
+        'timestamp': datetime.now().isoformat(),
+    }
+
+    feedbacks = load_feedbacks()
+    feedbacks.append(entry)
+    save_feedbacks(feedbacks)
+    return jsonify({'status': 'saved', 'entry': entry})
 
 
 @app.route('/api/proctor_logs')

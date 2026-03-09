@@ -106,5 +106,95 @@
     "name": "Test User",
     "role": "student",
     "password": "scrypt:32768:8:1$ite51LrwUA8SMKNs$3c834b4585c7256310de757d0d3bb6395eb0815ea4bc803e3914dce61aefa549bd4e23569a57e91004c3ea9afca080c45d2ccc51e6775a42473deab4f2ec965b"
+  },
+  {
+    "email": "testuser_6000b15e@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$aUpA0MYWk8BFX8p5$a597c75736f86e744ea421b467a1e469ef773a658e78f22cfa26784db3a4fefa2fca31f13f9e6af9866233ea975587d7e33b5cb3e9711a2e7b34a3c36303505e"
+  },
+  {
+    "email": "dup_a8592b09@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$2hEankmJrYfjZgIl$ab382c218cea5fb658ec166a3d8c59eeb58b2ac4cc71c9a25970ebe50b5aa6f02e1a538c5a4cb558ed5903279e022e67c5a4b2914be360f4dfc71bc3d5bd5ded"
+  },
+  {
+    "email": "testuser_8a90d8d5@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$McOHMKHFMEzlDE9h$b9bc6f809d393ecaabe96f9c4d02346887ad7e038a2f7674f64598911d2f6b7fffbdbe186c7d28c9d0c28ac01cbdb36acd1f820afa54cb2763942547d01abc42"
+  },
+  {
+    "email": "dup_d4425066@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$fok8I8ftjT2jMqTk$aa3bea07d719f652192affee7d659fc7ea043015e1a881a931ffe551cc4c579f6420f0ee59b05f4e8916179dc98b136a7626ae1c7ab9702d83902422f080cbf6"
+  },
+  {
+    "email": "exit_47775a89@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$dMZJM5IRlShTaeGW$9e2b7dbe3f6d376fb0aa03963bb6c4568827aa8edd1680eab7a0670121f73a5f519ada0f209d90b14bb0836a4a469226df587df8f026a1800def0b219737e74a"
+  },
+  {
+    "email": "testuser_ee80a056@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$Rxxh1wzmsQDEKk7d$414ccb015a290ff8d6c690ff3e37648a538210d638d0f521311ab593694fb1beb519d9cbdf72f0c5033886c7ae3b376aea55af45899e20e270bd82015924028a"
+  },
+  {
+    "email": "dup_704ce402@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$yk3cD6ZOQaj59aw3$6d83c673a640b1cc8920289cf673226a25b60b46ee15ac7329f136b071a1dff1948cf03fe59ece0905758aaa56b89b7b36e042a4c60071e177e1aafd83dd6c2b"
+  },
+  {
+    "email": "exit_318a1ac4@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$F670zymMwdbUlbeN$d577455c554db62f0ceeedc8130aa53efdf80a6e5369fb2987bf8405955e9f128e260a9e963f982aacc664988169f7aaa28c480ce335805abc8d12beb793600d"
+  },
+  {
+    "email": "anees@gmail.com",
+    "name": "anees",
+    "role": "teacher",
+    "password": "scrypt:32768:8:1$l8b6BaavOnZAWFtB$0402b5f15e52c7bd3b3eff9610ba6be625db7a46ce4b9abc8fab62e0b378838caaffe29894997a2e3e7e067bf7d52365553fda755eefe58c37267cfeb1687b04"
+  },
+  {
+    "email": "testuser_a33a78d8@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$tW9Ft7yIEp9do5ZY$0575f116d212266d8dd5a73b2a60a1d055ae15a7b7fb67d5860aeb32589e0540d3828f4836a9ba105e98131137ba52becd5613d9b36b14d638abcf7d2c6fbf1d"
+  },
+  {
+    "email": "dup_e5e2042a@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$QHqxvTpDq6Wmcb8Q$03e791600d008932285e95783ec87cc41ef46d776d4397c573efd301837759725e9d43d188b857853dd5aa31eebdde6bf87cb7480ba9bada75f0697a92eedc36"
+  },
+  {
+    "email": "exit_9c8c763d@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$TwvPOTgKnwTNwsI0$5a6460527596d4d5c20a74a5ded9b1136209236fc6a8ba390f0afabea33abdd6eece5d69160422f547d15f833507d721391372596be21f4627d588a480854f37"
+  },
+  {
+    "email": "testuser_1c032aa8@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$Q6s4o8syEhA4YJ5X$e4f869f4a89ec9509751a5cf5d002cdc1dd55813507100a001f7bdb3253af46a80f4dc6a6fe3787cd1cf40acfb1327f54f7902e046544551975052fb16d9291d"
+  },
+  {
+    "email": "dup_5aaab645@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$DF4ULYmyZUR0G37T$17eab186f34adb5ec5be416eb765fa75747183f2ab3993e5f0513a1422ef3d93680ba71fe142f1ef295e0c6d968b44a5f3c2c781990b6718f08fb896f326d56b"
+  },
+  {
+    "email": "exit_98210239@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$GgThNIwKnOFvrBtj$d30496ee39e0e077af8e7bad7e37f89e8a55c89cbbe457df3021461d23ffecfffd260ba2cb9ba96b9fa88c5ea511c392b360aa1eab681805bd6b2be68663c01d"
   }
 ]
