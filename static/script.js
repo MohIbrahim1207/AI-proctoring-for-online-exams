@@ -29,15 +29,17 @@ function mediaMessage(err) {
 
 async function checkCameraAndPreview() {
     cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-    video.srcObject = cameraStream;
-    statusEl.innerText = 'Webcam active';
+    if (video) video.srcObject = cameraStream;
+    if (statusEl) statusEl.innerText = 'Webcam active';
 }
 
 async function checkMicrophone() {
     const micStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
     micStream.getTracks().forEach((track) => track.stop());
-    micPrecheckEl.className = 'status-line mb-2 text-success';
-    micPrecheckEl.innerText = 'Microphone active';
+    if (micPrecheckEl) {
+        micPrecheckEl.className = 'status-line mb-2 text-success';
+        micPrecheckEl.innerText = 'Microphone active';
+    }
 }
 
 function startSendingFrames() {
@@ -46,7 +48,7 @@ function startSendingFrames() {
     }
 
     sendInterval = setInterval(() => {
-        if (!video.videoWidth || !video.videoHeight) {
+        if (!video || !video.videoWidth || !video.videoHeight) {
             return;
         }
 
@@ -73,10 +75,12 @@ function startSendingFrames() {
             })
                 .then((res) => res.json())
                 .then((data) => {
-                    if (data.issues && data.issues.length > 0) {
-                        alertsEl.innerText = `Warning: ${data.issues.join(', ')}`;
-                    } else {
-                        alertsEl.innerText = '';
+                    if (alertsEl) {
+                        if (data.issues && data.issues.length > 0) {
+                            alertsEl.innerText = `Warning: ${data.issues.join(', ')}`;
+                        } else {
+                            alertsEl.innerText = '';
+                        }
                     }
                 })
                 .catch((err) => {
@@ -108,7 +112,7 @@ async function completePrecheck() {
 
 async function runPrecheck() {
     if (!examId) {
-        statusEl.innerText = 'Missing exam context. Return to dashboard and try again.';
+        if (statusEl) statusEl.innerText = 'Missing exam context. Return to dashboard and try again.';
         return;
     }
 
@@ -116,26 +120,28 @@ async function runPrecheck() {
         await checkCameraAndPreview();
         await checkMicrophone();
         startSendingFrames();
-        alertsEl.innerText = '';
-        continueBtn.disabled = false;
+        if (alertsEl) alertsEl.innerText = '';
+        if (continueBtn) continueBtn.disabled = false;
     } catch (err) {
-        continueBtn.disabled = true;
+        if (continueBtn) continueBtn.disabled = true;
         const msg = mediaMessage(err);
-        statusEl.innerText = msg;
-        micPrecheckEl.className = 'status-line mb-2 text-danger';
-        micPrecheckEl.innerText = 'Microphone check failed';
-        alertsEl.innerText = msg;
+        if (statusEl) statusEl.innerText = msg;
+        if (micPrecheckEl) {
+            micPrecheckEl.className = 'status-line mb-2 text-danger';
+            micPrecheckEl.innerText = 'Microphone check failed';
+        }
+        if (alertsEl) alertsEl.innerText = msg;
     }
 }
 
 continueBtn.addEventListener('click', async () => {
-    continueBtn.disabled = true;
+    if (continueBtn) continueBtn.disabled = true;
     try {
         await completePrecheck();
         window.location.href = `/exam?id=${encodeURIComponent(examId)}`;
     } catch (err) {
-        alertsEl.innerText = err.message || 'Unable to continue';
-        continueBtn.disabled = false;
+        if (alertsEl) alertsEl.innerText = err.message || 'Unable to continue';
+        if (continueBtn) continueBtn.disabled = false;
     }
 });
 

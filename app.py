@@ -1,3 +1,4 @@
+# (Moved below app and socketio initialization)
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 from datetime import datetime, timedelta
@@ -70,7 +71,7 @@ def add_security_headers(response):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = (
-        "camera=(self), microphone=(self), geolocation=(), payment=(), usb=()"
+        "camera=(self), geolocation=(), payment=(), usb=()"
     )
     response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
@@ -526,7 +527,7 @@ def complete_precheck():
         return jsonify({"error": "Invalid exam id"}), 400
 
     if not camera_ok or not mic_ok:
-        return jsonify({"error": "Camera and microphone checks are required"}), 400
+        return jsonify({"error": "Camera check is required"}), 400
 
     session["precheck_exam_id"] = exam_id
     session["precheck_passed_at"] = int(time.time())
@@ -613,12 +614,12 @@ def upload_frame():
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
         if user_state["no_face"] >= 2:
-            issues.append("No face detected")
+            issues.append("Violation: No face detected. Please ensure your face is visible to the camera.")
     elif len(faces) > 1:
         user_state["no_face"] = 0
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
-        issues.append("Multiple people detected! Only one candidate allowed.")
+        issues.append("Violation: Multiple faces detected. Only one candidate is allowed during the exam.")
     else:
         user_state["no_face"] = 0
         now_ts = time.time()
@@ -636,7 +637,7 @@ def upload_frame():
                     and _alert_ready(user_state.get("last_missing_alert_ts", 0.0), now_ts)
                 ):
                     issues.append(
-                        "Eye tracking alert: Eyes not clearly visible for multiple frames"
+                        "Violation: Eyes not clearly visible for multiple frames. Please keep your eyes open and visible."
                     )
                     user_state["last_missing_alert_ts"] = now_ts
             else:
@@ -648,7 +649,7 @@ def upload_frame():
                         and _alert_ready(user_state.get("last_gaze_alert_ts", 0.0), now_ts)
                     ):
                         issues.append(
-                            f"Eye tracking alert: Candidate looking {metrics['direction']}"
+                            f"Violation: Candidate looking {metrics['direction']}. Please keep your gaze centered on the screen."
                         )
                         user_state["last_gaze_alert_ts"] = now_ts
                 else:

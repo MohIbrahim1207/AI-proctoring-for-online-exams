@@ -392,14 +392,37 @@ function startProctoring() {
         if (data.issues && data.issues.length > 0) {
           violationCount += 1;
           if (alertsBox) {
-            alertsBox.innerText = `Warning: ${data.issues.join(', ')}`;
+            alertsBox.innerText = `Warning: ${data.issues.map(msg => msg.replace('Violation: ', '')).join('\n')}`;
           }
-
-          await logViolation(data.issues.join(', '));
+          await logViolation(data.issues.join('\n'));
           checkAutoSubmit();
         } else if (alertsBox) {
           alertsBox.innerText = '';
         }
+      // SocketIO real-time violation alerts (initialize only once)
+      if (!window._proctorSocketInitialized) {
+        window._proctorSocketInitialized = true;
+        const socket = io();
+        socket.on('violation_detected', function(data) {
+          let message = '';
+          if (Array.isArray(data.issues)) {
+            message = data.issues.map(msg => msg.replace('Violation: ', '')).join('\n');
+            violationCount += data.issues.length;
+          } else if (typeof data.issues === 'string') {
+            message = data.issues.replace('Violation: ', '');
+            violationCount += 1;
+          }
+          if (message) {
+            // Show immediate alert popup
+            alert('Proctor Alert: ' + message);
+            // Also update the alerts area
+            if (alertsBox) {
+              alertsBox.innerText = `Real-time Warning: ${message}`;
+            }
+            checkAutoSubmit();
+          }
+        });
+      }
       } catch (err) {
         console.error('Frame upload failed', err);
       }
