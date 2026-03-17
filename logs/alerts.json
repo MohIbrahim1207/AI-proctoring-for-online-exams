@@ -326,5 +326,53 @@
     "user": "badrish@gmail.com",
     "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
     "timestamp": "2026-03-17T00:25:44.903979"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689417.51351.jpg",
+    "timestamp": "2026-03-17T01:00:17.546748"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689443.700145.jpg",
+    "timestamp": "2026-03-17T01:00:43.734392"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689458.698802.jpg",
+    "timestamp": "2026-03-17T01:00:58.729355"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689463.704901.jpg",
+    "timestamp": "2026-03-17T01:01:03.755855"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689468.701689.jpg",
+    "timestamp": "2026-03-17T01:01:08.739218"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773689473.700355.jpg",
+    "timestamp": "2026-03-17T01:01:13.739789"
   }
 ]
