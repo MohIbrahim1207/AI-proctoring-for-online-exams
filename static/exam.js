@@ -17,7 +17,10 @@ const totalMinutesInput = document.getElementById('totalMinutes');
 const studentId = studentIdInput ? studentIdInput.value : 'student_001';
 const csrfToken = csrfInput ? csrfInput.value : '';
 const totalMinutes = totalMinutesInput ? Number(totalMinutesInput.value || 60) : 60;
-const maxViolations = 3;
+const maxViolations = 6;
+const gazeBox = document.getElementById('gazeBox');
+const facesIndicator = document.getElementById('facesIndicator');
+const violationCounter = document.getElementById('violationCounter');
 const DEVICE_PREF_KEY = 'proctor_device_preferences';
 
 let stream;
@@ -59,7 +62,19 @@ function submitExam() {
   }
 }
 
+function updateViolationUI() {
+  if (violationCounter) {
+    violationCounter.textContent = `Violations: ${violationCount} / ${maxViolations}`;
+    violationCounter.className = violationCount >= maxViolations - 1
+      ? 'badge bg-danger fs-6'
+      : violationCount > 0
+        ? 'badge bg-warning text-dark fs-6'
+        : 'badge bg-success fs-6';
+  }
+}
+
 function checkAutoSubmit() {
+  updateViolationUI();
   if (violationCount >= maxViolations) {
     alert('Too many violations. Exam submitted.');
     submitExam();
@@ -359,7 +374,56 @@ function startTimer() {
   }, 1000);
 }
 
+function initProctorSocket() {
+  if (window._proctorSocketInitialized) {
+    return;
+  }
+  window._proctorSocketInitialized = true;
+  const socket = io();
+
+  // Listen for real-time gaze direction
+  socket.on('gaze_direction', function (data) {
+    if (gazeBox && data.gaze) {
+      gazeBox.innerText = `Gaze: ${data.gaze}`;
+      gazeBox.className = data.gaze === 'center'
+        ? 'alert alert-success mb-2'
+        : 'alert alert-warning mb-2';
+    }
+  });
+
+  // Listen for real-time frame updates (faces count)
+  socket.on('frame_uploaded', function (data) {
+    if (facesIndicator) {
+      const count = data.faces_detected || 0;
+      facesIndicator.textContent = `Faces Detected: ${count}`;
+      if (count === 0) {
+        facesIndicator.className = 'badge bg-danger fs-6';
+      } else if (count > 1) {
+        facesIndicator.className = 'badge bg-warning text-dark fs-6';
+      } else {
+        facesIndicator.className = 'badge bg-success fs-6';
+      }
+    }
+  });
+
+  // SocketIO violation alerts — only update UI display, do NOT increment count
+  // (count is already incremented via the HTTP response path)
+  socket.on('violation_detected', function (data) {
+    let message = '';
+    if (Array.isArray(data.issues)) {
+      message = data.issues.map(msg => msg.replace('Violation: ', '')).join('\n');
+    } else if (typeof data.issues === 'string') {
+      message = data.issues.replace('Violation: ', '');
+    }
+    if (message && alertsBox) {
+      alertsBox.innerText = `Warning: ${message}`;
+    }
+  });
+}
+
 function startProctoring() {
+  initProctorSocket();
+
   captureInterval = setInterval(() => {
     if (!video || !video.videoWidth || !video.videoHeight) {
       return;
@@ -389,10 +453,29 @@ function startProctoring() {
         });
 
         const data = await response.json();
-        // Display gaze direction from response
+
+        // Update gaze direction
         if (gazeBox && data.gaze) {
           gazeBox.innerText = `Gaze: ${data.gaze}`;
+          gazeBox.className = data.gaze === 'center'
+            ? 'alert alert-success mb-2'
+            : 'alert alert-warning mb-2';
         }
+
+        // Update faces indicator
+        if (facesIndicator) {
+          const faceCount = data.faces_detected || 0;
+          facesIndicator.textContent = `Faces Detected: ${faceCount}`;
+          if (faceCount === 0) {
+            facesIndicator.className = 'badge bg-danger fs-6';
+          } else if (faceCount > 1) {
+            facesIndicator.className = 'badge bg-warning text-dark fs-6';
+          } else {
+            facesIndicator.className = 'badge bg-success fs-6';
+          }
+        }
+
+        // Only count violations from the HTTP response (single source of truth)
         if (data.issues && data.issues.length > 0) {
           violationCount += 1;
           if (alertsBox) {
@@ -403,36 +486,6 @@ function startProctoring() {
         } else if (alertsBox) {
           alertsBox.innerText = '';
         }
-      // SocketIO real-time violation alerts (initialize only once)
-      if (!window._proctorSocketInitialized) {
-        window._proctorSocketInitialized = true;
-        const socket = io();
-        // Listen for real-time gaze direction
-        socket.on('gaze_direction', function(data) {
-          if (gazeBox && data.gaze) {
-            gazeBox.innerText = `Gaze: ${data.gaze}`;
-          }
-        });
-        socket.on('violation_detected', function(data) {
-          let message = '';
-          if (Array.isArray(data.issues)) {
-            message = data.issues.map(msg => msg.replace('Violation: ', '')).join('\n');
-            violationCount += data.issues.length;
-          } else if (typeof data.issues === 'string') {
-            message = data.issues.replace('Violation: ', '');
-            violationCount += 1;
-          }
-          if (message) {
-            // Show immediate alert popup
-            alert('Proctor Alert: ' + message);
-            // Also update the alerts area
-            if (alertsBox) {
-              alertsBox.innerText = `Real-time Warning: ${message}`;
-            }
-            checkAutoSubmit();
-          }
-        });
-      }
       } catch (err) {
         console.error('Frame upload failed', err);
       }

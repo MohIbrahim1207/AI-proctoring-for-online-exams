@@ -109,12 +109,15 @@ USER_SOFT_VIOLATION_STREAKS = {}
 # Eye tracking tuning knobs. These are conservative defaults aimed at reducing
 # false positives from brief blinks, lighting changes, or transient detector misses.
 EYE_REGION_TOP_RATIO = 0.72
-EYE_MISSING_STREAK_THRESHOLD = 4
-EYE_AWAY_STREAK_THRESHOLD = 5
-EYE_ALERT_COOLDOWN_SECONDS = 6
-GAZE_CENTER_MIN_RATIO = 0.32
-GAZE_CENTER_MAX_RATIO = 0.68
-MIN_INTER_EYE_DISTANCE_RATIO = 0.12
+EYE_MISSING_STREAK_THRESHOLD = 6
+EYE_AWAY_STREAK_THRESHOLD = 6
+EYE_ALERT_COOLDOWN_SECONDS = 8
+GAZE_CENTER_MIN_RATIO = 0.28
+GAZE_CENTER_MAX_RATIO = 0.72
+MIN_INTER_EYE_DISTANCE_RATIO = 0.10
+NO_FACE_STREAK_THRESHOLD = 4
+NO_FACE_ALERT_COOLDOWN_SECONDS = 8
+MULTIPLE_FACE_ALERT_COOLDOWN_SECONDS = 8
 
 
 def _eye_tracking_metrics(eyes, face_w, face_h):
@@ -191,7 +194,7 @@ if not os.path.exists(USERS_FILE):
         json.dump(default_users, f, indent=2)
 
 # proctoring threshold
-MAX_WARNINGS = 3
+MAX_WARNINGS = 6
 
 FIREBASE_DB_URL = os.environ.get("FIREBASE_DB_URL", "").strip()
 FIREBASE_CRED_PATH = os.environ.get(
@@ -589,11 +592,11 @@ def upload_frame():
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.equalizeHist(gray)
-    min_face = max(64, int(min(gray.shape[0], gray.shape[1]) * 0.12))
+    min_face = max(48, int(min(gray.shape[0], gray.shape[1]) * 0.10))
     faces = face_cascade.detectMultiScale(
         gray,
-        scaleFactor=1.2,
-        minNeighbors=6,
+        scaleFactor=1.15,
+        minNeighbors=5,
         minSize=(min_face, min_face),
     )
 
@@ -605,25 +608,33 @@ def upload_frame():
             "off_center": 0,
             "last_missing_alert_ts": 0.0,
             "last_gaze_alert_ts": 0.0,
+            "last_no_face_alert_ts": 0.0,
+            "last_multi_face_alert_ts": 0.0,
         },
     )
 
     issues = []
     gaze_direction = "Unknown"
+    now_ts = time.time()
     if len(faces) == 0:
         user_state["no_face"] += 1
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
-        if user_state["no_face"] >= 2:
+        if (
+            user_state["no_face"] >= NO_FACE_STREAK_THRESHOLD
+            and _alert_ready(user_state.get("last_no_face_alert_ts", 0.0), now_ts)
+        ):
             issues.append("Violation: No face detected. Please ensure your face is visible to the camera.")
+            user_state["last_no_face_alert_ts"] = now_ts
     elif len(faces) > 1:
         user_state["no_face"] = 0
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
-        issues.append("Violation: Multiple faces detected. Only one candidate is allowed during the exam.")
+        if _alert_ready(user_state.get("last_multi_face_alert_ts", 0.0), now_ts):
+            issues.append("Violation: Multiple faces detected. Only one candidate is allowed during the exam.")
+            user_state["last_multi_face_alert_ts"] = now_ts
     else:
         user_state["no_face"] = 0
-        now_ts = time.time()
         # One face detected - track whether both eyes are visible and roughly centered.
         for (x, y, w, h) in faces:
             roi_gray = gray[y:y+h, x:x+w]

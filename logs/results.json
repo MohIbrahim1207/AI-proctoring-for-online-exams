@@ -609,5 +609,105 @@
     "status": "Auto-submitted (too many violations)",
     "attempt_id": "e7f102589d618e4eda426687b8477cd7",
     "timestamp": "2026-03-17T18:57:39.282958"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "Python",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "f0f8f439a59d165c844e1d8ac0a2e4c7",
+    "timestamp": "2026-03-17T19:28:26.464328"
+  },
+  {
+    "user": "testuser_67ea6f9b@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "d2897c54ec24bcfdad8b1a296f44a0a3",
+    "timestamp": "2026-03-17T19:59:54.060091"
+  },
+  {
+    "user": "dup_f3574403@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "b50f2f6c29cf8ce1b355e973df03216f",
+    "timestamp": "2026-03-17T19:59:54.514178"
+  },
+  {
+    "user": "exit_380e1864@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "94d72435a03061ae790cf041216678fe",
+    "timestamp": "2026-03-17T19:59:54.983481"
+  },
+  {
+    "user": "testuser_2981d41e@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "f63247e39b36335d695d64b663495aba",
+    "timestamp": "2026-03-17T20:00:02.759076"
+  },
+  {
+    "user": "dup_d1f3c073@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 10,
+    "status": "Completed",
+    "attempt_id": "96f93a7cbd4ccdac18003fc7d88a0173",
+    "timestamp": "2026-03-17T20:00:03.128282"
+  },
+  {
+    "user": "exit_53b8cfa1@example.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "92b0db9d24a9ca8d84b76d22031816b0",
+    "timestamp": "2026-03-17T20:00:03.533346"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "6a673217390e51223f1615d10e66dd30",
+    "timestamp": "2026-03-17T20:00:58.014480"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "0a0ac90ec081ab1f228aae6da2e77b8d",
+    "timestamp": "2026-03-17T20:02:13.287329"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "RDBMS",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "0eb43cb52190e71a2b357c47df31f29d",
+    "timestamp": "2026-03-17T20:25:20.268749"
   }
 ]

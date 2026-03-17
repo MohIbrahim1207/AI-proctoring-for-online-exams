@@ -822,5 +822,23 @@
     "user": "badrish@gmail.com",
     "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
     "timestamp": "2026-03-17T18:57:39.234374"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/ibrahimgmail.com_1773755904.01902.jpg",
+    "timestamp": "2026-03-17T19:28:24.044574"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T19:28:26.384477"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "reason": "Suspicious audio: loud talking/noise detected",
+    "timestamp": "2026-03-17T20:02:13.240053"
   }
 ]

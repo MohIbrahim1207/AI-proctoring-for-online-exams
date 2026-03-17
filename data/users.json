@@ -196,5 +196,41 @@
     "name": "Exit Attempt User",
     "role": "student",
     "password": "scrypt:32768:8:1$GgThNIwKnOFvrBtj$d30496ee39e0e077af8e7bad7e37f89e8a55c89cbbe457df3021461d23ffecfffd260ba2cb9ba96b9fa88c5ea511c392b360aa1eab681805bd6b2be68663c01d"
+  },
+  {
+    "email": "testuser_67ea6f9b@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$MKJNBVZZsFTapXlz$c83bbc6720fec6b9a73a54c3d3dbea1d10f5e619b8f740b17a8a995426e98b8af78439f22902d301168ac7311dd619cd48a0f26ffe6adecc30bd244a5ddba347"
+  },
+  {
+    "email": "dup_f3574403@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$H72MIBbMOXWpQpeo$bec23a6dc008235aa2656f9918b31e5b1f72602a9d815e9ad247290e07a36032ab79ae93ba021c0570356fe09176db264e45ba06a21532e2d073b98bea850d0c"
+  },
+  {
+    "email": "exit_380e1864@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$kqrJpmm13t9QTf8I$1273e94690d485c2d63f549f834fbb9a9222dd298ed8e09cfc65374a2185189c57e3ced4b27d42785936ffd16642ee78f92e57a3d85c28be50d9b0a99d7a00f6"
+  },
+  {
+    "email": "testuser_2981d41e@example.com",
+    "name": "Test User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$kMaXlsOLlTuRJXaF$2b7fa3652adaa6ca195285303426dc3396d368dfd3ee5aa62442b884bf07d82332ac084ae976ee148bcbaf80d85125980dd3bdb0de2462e3fe177471fbf8f578"
+  },
+  {
+    "email": "dup_d1f3c073@example.com",
+    "name": "Duplicate Submit User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$cxl7gCb3eUwECjzT$b088518d31bde03ee220edaf8d561f981de7e954575965a15f1a0b094b185d413444fa019f8dc6551f6fd21577773cd52ac474b77c189f9f1dc4d7cda439c0bb"
+  },
+  {
+    "email": "exit_53b8cfa1@example.com",
+    "name": "Exit Attempt User",
+    "role": "student",
+    "password": "scrypt:32768:8:1$m6gMMTrvuZQfhZdg$37e2bd568562c6a5a1c9f84cc64dc1c9862ebe92a684367640f3d2a1dfec3ec1933d322469826694b8e2eb505b0f4a903416f22fe975b3195dad6f4a96ca2340"
   }
 ]
