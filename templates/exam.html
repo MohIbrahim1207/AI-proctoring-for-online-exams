@@ -39,7 +39,7 @@
 
                             <div class="d-flex justify-content-center gap-2 flex-wrap mt-2 mb-2">
                                 <span id="facesIndicator" class="badge bg-secondary fs-6">Faces Detected: —</span>
-                                <span id="violationCounter" class="badge bg-success fs-6">Violations: 0 / 6</span>
+                                <span id="violationCounter" class="badge bg-success fs-6">Violations: 0 / 3</span>
                             </div>
 
                             <div id="gazeBox" class="alert alert-info mb-2">Gaze: Waiting...</div>
@@ -52,8 +52,10 @@
 
                             <div class="d-grid gap-2">
                                 <button id="startBtn" type="button" class="btn btn-proctor">Start Exam</button>
-                                <button id="retryMediaBtn" type="button" class="btn btn-outline-secondary">Retry Camera/Mic</button>
-                                <button type="button" class="btn btn-outline-dark" onclick="document.documentElement.requestFullscreen()">
+                                <button id="retryMediaBtn" type="button" class="btn btn-outline-secondary">Retry
+                                    Camera/Mic</button>
+                                <button type="button" class="btn btn-outline-dark"
+                                    onclick="document.documentElement.requestFullscreen()">
                                     Enter Full Screen
                                 </button>
                             </div>
@@ -65,12 +67,14 @@
                     <section class="panel h-100">
                         <div class="panel-head d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <h5 class="mb-0">Questions</h5>
-                            <div id="timer" class="fw-bold">Time Left: <span id="timeRemaining">{{ exam_meta['minutes'] if exam_meta else 60 }}:00</span></div>
+                            <div id="timer" class="fw-bold">Time Left: <span id="timeRemaining">{{ exam_meta['minutes']
+                                    if exam_meta else 60 }}:00</span></div>
                         </div>
                         <div class="panel-body">
                             {% for q in questions %}
                             <div class="question-card">
-                                <p class="fw-bold mb-2"><span class="question-index">Q{{ loop.index }}</span>{{ q.question }}</p>
+                                <p class="fw-bold mb-2"><span class="question-index">Q{{ loop.index }}</span>{{
+                                    q.question }}</p>
                                 {% set letters = ['A','B','C','D'] %}
                                 {% for opt in q.options %}
                                 <div class="form-check mb-2">
@@ -86,11 +90,14 @@
 
                             <div class="d-flex justify-content-between flex-wrap gap-2 mt-3">
                                 <div>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="prevQuestion()">Previous</button>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="nextQuestion()">Next</button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="prevQuestion()">Previous</button>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="nextQuestion()">Next</button>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-outline-danger" id="exitTestBtn">Exit Test</button>
+                                    <button type="button" class="btn btn-outline-danger" id="exitTestBtn">Exit
+                                        Test</button>
                                     <button type="submit" class="btn btn-success" id="submitBtn">Submit Exam</button>
                                 </div>
                             </div>
@@ -103,7 +110,7 @@
 
     <script type="module" src="{{ url_for('static', filename='take_exam.js') }}"></script>
     <script src="{{ url_for('static', filename='exam.js') }}"></script>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </body>
 
 </html>

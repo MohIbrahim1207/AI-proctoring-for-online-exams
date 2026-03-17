@@ -194,7 +194,7 @@ if not os.path.exists(USERS_FILE):
         json.dump(default_users, f, indent=2)
 
 # proctoring threshold
-MAX_WARNINGS = 6
+MAX_WARNINGS = 3
 
 FIREBASE_DB_URL = os.environ.get("FIREBASE_DB_URL", "").strip()
 FIREBASE_CRED_PATH = os.environ.get(
