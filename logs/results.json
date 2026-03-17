@@ -539,5 +539,15 @@
     "status": "Auto-submitted (too many violations)",
     "attempt_id": "d10377316d0006b964fd53f3f4d10079",
     "timestamp": "2026-03-17T00:25:44.957830"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "6549fcb62f2dcbd85c2c80c19cc0cfc5",
+    "timestamp": "2026-03-17T14:07:13.753705"
   }
 ]
