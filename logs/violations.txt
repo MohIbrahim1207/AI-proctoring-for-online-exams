@@ -325,3 +325,13 @@
 2026-03-17 14:06:32.814522 | badrish@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-17 14:07:09.331528 | badrish@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-17 14:07:13.666912 | badrish@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-17 15:25:18.810732 | badrish@gmail.com | Tab switched
+2026-03-17 16:54:47.978534 | badrish@gmail.com | Tab switched
+2026-03-17 17:01:33.157431 | badrish@gmail.com | Suspicious audio: loud talking/noise detected
+2026-03-17 17:05:21.294280 | badrish@gmail.com | Suspicious audio: loud talking/noise detected
+2026-03-17 17:05:21.420066 | badrish@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 17:05:25.197828 | badrish@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-17 17:27:30.814717 | badrish@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 17:27:32.999107 | badrish@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-17 18:57:34.597756 | badrish@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 18:57:39.233371 | badrish@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.

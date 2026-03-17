@@ -763,5 +763,64 @@
     "user": "badrish@gmail.com",
     "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
     "timestamp": "2026-03-17T14:07:13.722390"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-17T15:25:18.813257"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Tab switched",
+    "timestamp": "2026-03-17T16:54:47.978534"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Suspicious audio: loud talking/noise detected",
+    "timestamp": "2026-03-17T17:01:33.158436"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Suspicious audio: loud talking/noise detected",
+    "timestamp": "2026-03-17T17:05:21.295795"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773747321.340755.jpg",
+    "timestamp": "2026-03-17T17:05:21.400969"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T17:05:25.198822"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773748650.784176.jpg",
+    "timestamp": "2026-03-17T17:27:30.810455"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T17:27:32.999107"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/badrishgmail.com_1773754054.570762.jpg",
+    "timestamp": "2026-03-17T18:57:34.591759"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T18:57:39.234374"
   }
 ]

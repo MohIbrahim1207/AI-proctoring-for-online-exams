@@ -609,6 +609,7 @@ def upload_frame():
     )
 
     issues = []
+    gaze_direction = "Unknown"
     if len(faces) == 0:
         user_state["no_face"] += 1
         user_state["missing_eyes"] = 0
@@ -629,6 +630,7 @@ def upload_frame():
             eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 4, minSize=(18, 18))
 
             metrics = _eye_tracking_metrics(eyes, w, h)
+            gaze_direction = metrics.get("direction", "Unknown")
             if metrics["usable_eyes"] < 2:
                 user_state["missing_eyes"] += 1
                 user_state["off_center"] = 0
@@ -693,17 +695,27 @@ def upload_frame():
             "timestamp": datetime.now().isoformat(),
         })
 
+
+    # Emit gaze direction to frontend
+    socketio.emit("gaze_direction", {
+        "user": safe_student_id,
+        "gaze": gaze_direction,
+        "timestamp": datetime.now().isoformat(),
+    })
+
     socketio.emit("frame_uploaded", {
         "user": safe_student_id,
         "faces_detected": len(faces),
         "issues": issues,
+        "gaze": gaze_direction,
         "timestamp": datetime.now().isoformat(),
     })
 
     return jsonify({
         "status": "received",
         "faces_detected": len(faces),
-        "issues": issues
+        "issues": issues,
+        "gaze": gaze_direction
     })
 @app.route("/log_violation", methods=["POST"])
 @limiter.limit("120 per minute")

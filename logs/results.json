@@ -549,5 +549,65 @@
     "status": "Auto-submitted (too many violations)",
     "attempt_id": "6549fcb62f2dcbd85c2c80c19cc0cfc5",
     "timestamp": "2026-03-17T14:07:13.753705"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "75623501307b55d655191cc11b660311",
+    "timestamp": "2026-03-17T15:25:18.844949"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "b335be6163ebdb319ced2ad229bd0e11",
+    "timestamp": "2026-03-17T16:54:48.026754"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "e030cbc017e5635c00ac580495aab2fd",
+    "timestamp": "2026-03-17T17:01:33.185615"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "SQL",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "9c5549eaa74c9a5c8be5046ec50d7937",
+    "timestamp": "2026-03-17T17:05:21.327018"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "f520283c261244d3c71172604e5885c4",
+    "timestamp": "2026-03-17T17:27:33.037806"
+  },
+  {
+    "user": "badrish@gmail.com",
+    "examName": "Data Structures",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "e7f102589d618e4eda426687b8477cd7",
+    "timestamp": "2026-03-17T18:57:39.282958"
   }
 ]

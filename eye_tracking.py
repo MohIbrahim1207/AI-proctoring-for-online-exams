@@ -9,39 +9,60 @@ from datetime import datetime
 mp_face_mesh = mp.solutions.face_mesh
 mp_drawing = mp.solutions.drawing_utils
 
-# Eye landmark indices for MediaPipe Face Mesh
-LEFT_EYE = [33, 133, 160, 159, 158, 157, 173, 153, 154, 155, 263, 362, 387, 386, 385, 384, 398, 382, 381, 380]
-RIGHT_EYE = [263, 362, 387, 386, 385, 384, 398, 382, 381, 380, 33, 133, 160, 159, 158, 157, 173, 153, 154, 155]
+
+# Eye and iris landmark indices for MediaPipe Face Mesh
+LEFT_EYE = [33, 133, 160, 159, 158, 157, 173, 153, 154, 155]
+RIGHT_EYE = [362, 263, 387, 386, 385, 384, 398, 382, 381, 380]
+LEFT_IRIS = [474, 475, 476, 477]
+RIGHT_IRIS = [469, 470, 471, 472]
+
 
 
 def get_eye_landmarks(landmarks, eye_indices):
-    return np.array([ [landmarks[i].x, landmarks[i].y] for i in eye_indices ])
+    return np.array([[landmarks[i].x, landmarks[i].y] for i in eye_indices])
 
-def get_gaze_direction(eye_landmarks):
-    # Use horizontal and vertical ratios to estimate gaze
-    left = eye_landmarks[0]
-    right = eye_landmarks[10]
-    top = eye_landmarks[4]
-    bottom = eye_landmarks[14]
-    center = (left + right + top + bottom) / 4
-    # Calculate ratios
-    x_ratio = (center[0] - left[0]) / (right[0] - left[0])
-    y_ratio = (center[1] - top[1]) / (bottom[1] - top[1])
+def get_iris_center(landmarks, iris_indices):
+    iris_points = np.array([[landmarks[i].x, landmarks[i].y] for i in iris_indices])
+    return np.mean(iris_points, axis=0)
+
+
+# Improved gaze detection using iris center
+def get_gaze_direction(landmarks, eye_indices, iris_indices):
+    eye_pts = np.array([[landmarks[i].x, landmarks[i].y] for i in eye_indices])
+    iris_center = get_iris_center(landmarks, iris_indices)
+    left_corner = eye_pts[0]
+    right_corner = eye_pts[1]
+    top = eye_pts[2]
+    bottom = eye_pts[4]
+    # Horizontal gaze
+    x_ratio = (iris_center[0] - left_corner[0]) / (right_corner[0] - left_corner[0])
+    # Vertical gaze (not used for now)
+    # y_ratio = (iris_center[1] - top[1]) / (bottom[1] - top[1])
     if x_ratio < 0.35:
         return "Left"
     elif x_ratio > 0.65:
         return "Right"
-    elif y_ratio < 0.35:
-        return "Up"
     else:
         return "Center"
 
-def draw_eye_landmarks(frame, landmarks, eye_indices):
+
+def draw_eye_landmarks(frame, landmarks, eye_indices, color=(0,255,0)):
     h, w, _ = frame.shape
     for idx in eye_indices:
         x = int(landmarks[idx].x * w)
         y = int(landmarks[idx].y * h)
-        cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
+        cv2.circle(frame, (x, y), 2, color, -1)
+
+def draw_iris(frame, landmarks, iris_indices, color=(255,0,255)):
+    h, w, _ = frame.shape
+    for idx in iris_indices:
+        x = int(landmarks[idx].x * w)
+        y = int(landmarks[idx].y * h)
+        cv2.circle(frame, (x, y), 2, color, -1)
+    # Draw iris center
+    iris_center = get_iris_center(landmarks, iris_indices)
+    cx, cy = int(iris_center[0] * w), int(iris_center[1] * h)
+    cv2.circle(frame, (cx, cy), 3, (0,0,255), -1)
 
 
 def log_violation(message):
@@ -59,6 +80,7 @@ def send_violation_alert(issue):
     except Exception:
         pass
 
+
 def eye_tracking():
     cap = cv2.VideoCapture(0)
     with mp_face_mesh.FaceMesh(
@@ -73,6 +95,7 @@ def eye_tracking():
         last_away_violation = 0
         last_multi_violation = 0
         last_no_face_violation = 0
+        gaze_threshold = 1  # seconds to trigger "look away" (was 2)
         while True:
             ret, frame = cap.read()
             if not ret:
@@ -81,6 +104,8 @@ def eye_tracking():
             results = face_mesh.process(frame_rgb)
             gaze = "Unknown"
             num_faces = 0
+            gaze_left = "Unknown"
+            gaze_right = "Unknown"
             if results.multi_face_landmarks:
                 num_faces = len(results.multi_face_landmarks)
                 # Multiple faces detection
@@ -93,18 +118,26 @@ def eye_tracking():
                 last_face_time = time.time()
                 # Gaze tracking for first face
                 landmarks = results.multi_face_landmarks[0].landmark
-                left_eye = get_eye_landmarks(landmarks, LEFT_EYE)
-                right_eye = get_eye_landmarks(landmarks, RIGHT_EYE)
-                gaze_left = get_gaze_direction(left_eye)
-                gaze_right = get_gaze_direction(right_eye)
-                gaze = gaze_left if gaze_left == gaze_right else "Center"
-                draw_eye_landmarks(frame, landmarks, LEFT_EYE)
-                draw_eye_landmarks(frame, landmarks, RIGHT_EYE)
+                gaze_left = get_gaze_direction(landmarks, LEFT_EYE, LEFT_IRIS)
+                gaze_right = get_gaze_direction(landmarks, RIGHT_EYE, RIGHT_IRIS)
+                # If either eye is not center, consider as looking away
+                if gaze_left != "Center":
+                    gaze = gaze_left
+                elif gaze_right != "Center":
+                    gaze = gaze_right
+                else:
+                    gaze = "Center"
+                # Debug log
+                print(f"Gaze Left: {gaze_left}, Gaze Right: {gaze_right}, Final: {gaze}")
+                draw_eye_landmarks(frame, landmarks, LEFT_EYE, color=(0,255,0))
+                draw_eye_landmarks(frame, landmarks, RIGHT_EYE, color=(0,255,0))
+                draw_iris(frame, landmarks, LEFT_IRIS, color=(255,0,255))
+                draw_iris(frame, landmarks, RIGHT_IRIS, color=(255,0,255))
                 cv2.putText(frame, f"Gaze: {gaze}", (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
                 if gaze != "Center":
                     if away_start is None:
                         away_start = time.time()
-                    elif time.time() - away_start > 2 and (time.time() - last_away_violation > violation_cooldown):
+                    elif time.time() - away_start > gaze_threshold and (time.time() - last_away_violation > violation_cooldown):
                         msg = f"Student looked away from screen (gaze: {gaze})"
                         log_violation(msg)
                         send_violation_alert(msg)

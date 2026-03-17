@@ -375,5 +375,83 @@
     "submitted_at": "2026-03-17T14:07:13.756706",
     "score": 0,
     "totalMarks": 10
+  },
+  {
+    "attempt_id": "75623501307b55d655191cc11b660311",
+    "user": "badrish@gmail.com",
+    "exam_id": "c_programming",
+    "exam_name": "C Programming",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773741283,
+    "started_at": "2026-03-17T15:24:43.526897",
+    "submitted_at": "2026-03-17T15:25:18.853037",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "b335be6163ebdb319ced2ad229bd0e11",
+    "user": "badrish@gmail.com",
+    "exam_id": "c_programming",
+    "exam_name": "C Programming",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773746632,
+    "started_at": "2026-03-17T16:53:52.160636",
+    "submitted_at": "2026-03-17T16:54:48.031797",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "e030cbc017e5635c00ac580495aab2fd",
+    "user": "badrish@gmail.com",
+    "exam_id": "c_programming",
+    "exam_name": "C Programming",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773747080,
+    "started_at": "2026-03-17T17:01:20.890023",
+    "submitted_at": "2026-03-17T17:01:33.188618",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "9c5549eaa74c9a5c8be5046ec50d7937",
+    "user": "badrish@gmail.com",
+    "exam_id": "sql",
+    "exam_name": "SQL",
+    "minutes": 30,
+    "status": "auto_submitted",
+    "seed": 1773747308,
+    "started_at": "2026-03-17T17:05:08.619614",
+    "submitted_at": "2026-03-17T17:05:21.331022",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "f520283c261244d3c71172604e5885c4",
+    "user": "badrish@gmail.com",
+    "exam_id": "c_programming",
+    "exam_name": "C Programming",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773748636,
+    "started_at": "2026-03-17T17:27:16.529890",
+    "submitted_at": "2026-03-17T17:27:33.042399",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "e7f102589d618e4eda426687b8477cd7",
+    "user": "badrish@gmail.com",
+    "exam_id": "data_structures",
+    "exam_name": "Data Structures",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773753990,
+    "started_at": "2026-03-17T18:56:30.639514",
+    "submitted_at": "2026-03-17T18:57:39.289470",
+    "score": 0,
+    "totalMarks": 10
   }
 ]

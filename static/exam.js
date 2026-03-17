@@ -389,6 +389,10 @@ function startProctoring() {
         });
 
         const data = await response.json();
+        // Display gaze direction from response
+        if (gazeBox && data.gaze) {
+          gazeBox.innerText = `Gaze: ${data.gaze}`;
+        }
         if (data.issues && data.issues.length > 0) {
           violationCount += 1;
           if (alertsBox) {
@@ -403,6 +407,12 @@ function startProctoring() {
       if (!window._proctorSocketInitialized) {
         window._proctorSocketInitialized = true;
         const socket = io();
+        // Listen for real-time gaze direction
+        socket.on('gaze_direction', function(data) {
+          if (gazeBox && data.gaze) {
+            gazeBox.innerText = `Gaze: ${data.gaze}`;
+          }
+        });
         socket.on('violation_detected', function(data) {
           let message = '';
           if (Array.isArray(data.issues)) {
