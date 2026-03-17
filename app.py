@@ -109,15 +109,15 @@ USER_SOFT_VIOLATION_STREAKS = {}
 # Eye tracking tuning knobs. These are conservative defaults aimed at reducing
 # false positives from brief blinks, lighting changes, or transient detector misses.
 EYE_REGION_TOP_RATIO = 0.72
-EYE_MISSING_STREAK_THRESHOLD = 6
-EYE_AWAY_STREAK_THRESHOLD = 6
-EYE_ALERT_COOLDOWN_SECONDS = 8
+EYE_MISSING_STREAK_THRESHOLD = 3
+EYE_AWAY_STREAK_THRESHOLD = 3
+EYE_ALERT_COOLDOWN_SECONDS = 4
 GAZE_CENTER_MIN_RATIO = 0.28
 GAZE_CENTER_MAX_RATIO = 0.72
 MIN_INTER_EYE_DISTANCE_RATIO = 0.10
-NO_FACE_STREAK_THRESHOLD = 4
-NO_FACE_ALERT_COOLDOWN_SECONDS = 8
-MULTIPLE_FACE_ALERT_COOLDOWN_SECONDS = 8
+NO_FACE_STREAK_THRESHOLD = 2
+NO_FACE_ALERT_COOLDOWN_SECONDS = 4
+MULTIPLE_FACE_ALERT_COOLDOWN_SECONDS = 4
 
 
 def _eye_tracking_metrics(eyes, face_w, face_h):
@@ -177,8 +177,51 @@ def _eye_tracking_metrics(eyes, face_w, face_h):
     }
 
 
-def _alert_ready(last_ts, now_ts):
-    return (now_ts - float(last_ts or 0.0)) >= EYE_ALERT_COOLDOWN_SECONDS
+def _cooldown_ready(last_ts, now_ts, cooldown_seconds):
+    return (now_ts - float(last_ts or 0.0)) >= float(cooldown_seconds or 0.0)
+
+
+def _preprocess_frame_for_detection(bgr):
+    """
+    Resize + normalize contrast to improve Haar stability and speed.
+    Returns: (small_bgr, gray_eq, scale_x, scale_y)
+    """
+    if bgr is None or bgr.size == 0:
+        return bgr, None, 1.0, 1.0
+
+    h, w = bgr.shape[:2]
+    target_w = 640
+    if w > target_w:
+        scale = target_w / float(w)
+        new_w = target_w
+        new_h = max(1, int(h * scale))
+        small = cv2.resize(bgr, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        sx = w / float(new_w)
+        sy = h / float(new_h)
+    else:
+        small = bgr
+        sx = 1.0
+        sy = 1.0
+
+    gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+    # CLAHE is more robust than equalizeHist under uneven lighting.
+    gray = _CLAHE.apply(gray)
+    return small, gray, sx, sy
+
+
+def _scale_rects(rects, sx, sy):
+    if rects is None:
+        return []
+    out = []
+    for (x, y, w, h) in rects:
+        out.append((int(x * sx), int(y * sy), int(w * sx), int(h * sy)))
+    return out
+
+
+def _pick_largest_face(faces):
+    if not faces:
+        return None
+    return max(faces, key=lambda r: r[2] * r[3])
 
 # users storage (JSON)
 DATA_DIR = os.path.join(os.getcwd(), 'data')
@@ -409,9 +452,15 @@ init_firebase()
 face_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
+profile_face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + "haarcascade_profileface.xml"
+)
 eye_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_eye.xml"
 )
+
+# Contrast normalization (helps low-light webcams)
+_CLAHE = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
 
 # ------------------------------
 # MCQ DATA
@@ -590,26 +639,43 @@ def upload_frame():
             "issues": ["Invalid image frame"]
         })
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.equalizeHist(gray)
-    min_face = max(48, int(min(gray.shape[0], gray.shape[1]) * 0.10))
-    faces = face_cascade.detectMultiScale(
-        gray,
-        scaleFactor=1.15,
-        minNeighbors=5,
+    _, gray_small, sx, sy = _preprocess_frame_for_detection(image)
+    if gray_small is None:
+        return jsonify({"status": "error", "issues": ["Invalid image frame"]})
+
+    min_face = max(44, int(min(gray_small.shape[0], gray_small.shape[1]) * 0.10))
+    faces_small = face_cascade.detectMultiScale(
+        gray_small,
+        scaleFactor=1.12,
+        minNeighbors=6,
         minSize=(min_face, min_face),
+        flags=cv2.CASCADE_SCALE_IMAGE,
     )
+    # Profile faces are common when looking away; include them for robustness.
+    if len(faces_small) == 0:
+        faces_small = profile_face_cascade.detectMultiScale(
+            gray_small,
+            scaleFactor=1.12,
+            minNeighbors=6,
+            minSize=(min_face, min_face),
+            flags=cv2.CASCADE_SCALE_IMAGE,
+        )
+
+    faces = _scale_rects(faces_small, sx, sy)
 
     user_state = USER_SOFT_VIOLATION_STREAKS.setdefault(
         safe_student_id,
         {
             "no_face": 0,
+            "multi_face": 0,
             "missing_eyes": 0,
             "off_center": 0,
             "last_missing_alert_ts": 0.0,
             "last_gaze_alert_ts": 0.0,
             "last_no_face_alert_ts": 0.0,
             "last_multi_face_alert_ts": 0.0,
+            "last_face_box": None,
+            "gaze_ema": 0.5,
         },
     )
 
@@ -618,36 +684,88 @@ def upload_frame():
     now_ts = time.time()
     if len(faces) == 0:
         user_state["no_face"] += 1
+        user_state["multi_face"] = 0
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
         if (
             user_state["no_face"] >= NO_FACE_STREAK_THRESHOLD
-            and _alert_ready(user_state.get("last_no_face_alert_ts", 0.0), now_ts)
+            and _cooldown_ready(
+                user_state.get("last_no_face_alert_ts", 0.0),
+                now_ts,
+                NO_FACE_ALERT_COOLDOWN_SECONDS,
+            )
         ):
             issues.append("Violation: No face detected. Please ensure your face is visible to the camera.")
             user_state["last_no_face_alert_ts"] = now_ts
     elif len(faces) > 1:
         user_state["no_face"] = 0
+        user_state["multi_face"] += 1
         user_state["missing_eyes"] = 0
         user_state["off_center"] = 0
-        if _alert_ready(user_state.get("last_multi_face_alert_ts", 0.0), now_ts):
+        # Require a tiny persistence window to avoid jitter.
+        if (
+            user_state["multi_face"] >= 2
+            and _cooldown_ready(
+                user_state.get("last_multi_face_alert_ts", 0.0),
+                now_ts,
+                MULTIPLE_FACE_ALERT_COOLDOWN_SECONDS,
+            )
+        ):
             issues.append("Violation: Multiple faces detected. Only one candidate is allowed during the exam.")
             user_state["last_multi_face_alert_ts"] = now_ts
     else:
         user_state["no_face"] = 0
+        user_state["multi_face"] = 0
         # One face detected - track whether both eyes are visible and roughly centered.
-        for (x, y, w, h) in faces:
-            roi_gray = gray[y:y+h, x:x+w]
-            eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 4, minSize=(18, 18))
+        face = _pick_largest_face(list(faces))
+        if face:
+            (x, y, w, h) = face
+            user_state["last_face_box"] = [int(x), int(y), int(w), int(h)]
+
+            # Eye detection works better on the upper region only.
+            ih, iw = image.shape[:2]
+            x1 = max(0, int(x))
+            y1 = max(0, int(y))
+            x2 = min(iw, int(x + w))
+            y2 = min(ih, int(y + h))
+            roi_bgr = image[y1:y2, x1:x2]
+            if roi_bgr.size == 0:
+                eyes = ()
+            else:
+                roi_gray = cv2.cvtColor(roi_bgr, cv2.COLOR_BGR2GRAY)
+                roi_gray = _CLAHE.apply(roi_gray)
+                eyes = eye_cascade.detectMultiScale(
+                    roi_gray,
+                    scaleFactor=1.08,
+                    minNeighbors=5,
+                    minSize=(16, 16),
+                    flags=cv2.CASCADE_SCALE_IMAGE,
+                )
 
             metrics = _eye_tracking_metrics(eyes, w, h)
-            gaze_direction = metrics.get("direction", "Unknown")
+            # Smooth gaze ratio so direction doesn't flap.
+            gaze_ema = float(user_state.get("gaze_ema", 0.5) or 0.5)
+            # Faster response (less smoothing) for quicker alerts.
+            gaze_ema = (0.5 * gaze_ema) + (0.5 * float(metrics.get("gaze_ratio", 0.5)))
+            user_state["gaze_ema"] = gaze_ema
+
+            if gaze_ema < GAZE_CENTER_MIN_RATIO:
+                gaze_direction = "left"
+            elif gaze_ema > GAZE_CENTER_MAX_RATIO:
+                gaze_direction = "right"
+            else:
+                gaze_direction = "center"
+
             if metrics["usable_eyes"] < 2:
                 user_state["missing_eyes"] += 1
                 user_state["off_center"] = 0
                 if (
                     user_state["missing_eyes"] >= EYE_MISSING_STREAK_THRESHOLD
-                    and _alert_ready(user_state.get("last_missing_alert_ts", 0.0), now_ts)
+                    and _cooldown_ready(
+                        user_state.get("last_missing_alert_ts", 0.0),
+                        now_ts,
+                        EYE_ALERT_COOLDOWN_SECONDS,
+                    )
                 ):
                     issues.append(
                         "Violation: Eyes not clearly visible for multiple frames. Please keep your eyes open and visible."
@@ -655,14 +773,23 @@ def upload_frame():
                     user_state["last_missing_alert_ts"] = now_ts
             else:
                 user_state["missing_eyes"] = 0
-                if metrics["looking_away"]:
+                # Use smoothed gaze direction, but still require a reasonable inter-eye distance.
+                looking_away = (
+                    metrics.get("inter_eye_ratio", 0.0) >= MIN_INTER_EYE_DISTANCE_RATIO
+                    and gaze_direction in ("left", "right")
+                )
+                if looking_away:
                     user_state["off_center"] += 1
                     if (
                         user_state["off_center"] >= EYE_AWAY_STREAK_THRESHOLD
-                        and _alert_ready(user_state.get("last_gaze_alert_ts", 0.0), now_ts)
+                        and _cooldown_ready(
+                            user_state.get("last_gaze_alert_ts", 0.0),
+                            now_ts,
+                            EYE_ALERT_COOLDOWN_SECONDS,
+                        )
                     ):
                         issues.append(
-                            f"Violation: Candidate looking {metrics['direction']}. Please keep your gaze centered on the screen."
+                            f"Violation: Candidate looking {gaze_direction}. Please keep your gaze centered on the screen."
                         )
                         user_state["last_gaze_alert_ts"] = now_ts
                 else:

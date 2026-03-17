@@ -840,5 +840,44 @@
     "user": "ibrahim@gmail.com",
     "reason": "Suspicious audio: loud talking/noise detected",
     "timestamp": "2026-03-17T20:02:13.240053"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/ibrahim12halgmail.com_1773768107.312809.jpg",
+    "timestamp": "2026-03-17T22:51:47.336622"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T22:51:47.348699"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/ibrahim12halgmail.com_1773768132.311195.jpg",
+    "timestamp": "2026-03-17T22:52:12.335230"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T22:52:12.358945"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "issues": [
+      "Violation: No face detected. Please ensure your face is visible to the camera."
+    ],
+    "file": "uploads/ibrahim12halgmail.com_1773771279.415599.jpg",
+    "timestamp": "2026-03-17T23:44:39.453207"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "reason": "Violation: No face detected. Please ensure your face is visible to the camera.",
+    "timestamp": "2026-03-17T23:44:39.471705"
   }
 ]

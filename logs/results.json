@@ -709,5 +709,35 @@
     "status": "Exited by student",
     "attempt_id": "0eb43cb52190e71a2b357c47df31f29d",
     "timestamp": "2026-03-17T20:25:20.268749"
+  },
+  {
+    "user": "ibrahim@gmail.com",
+    "examName": "SQL",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Exited by student",
+    "attempt_id": "bc726be31b8a0f0fd4cd998cc2ba369e",
+    "timestamp": "2026-03-17T21:02:19.411748"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "examName": "C Programming",
+    "allottedTime": 45,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "2974b5d15d4b90ef274515fd87d7f466",
+    "timestamp": "2026-03-17T22:52:12.389189"
+  },
+  {
+    "user": "ibrahim12hal@gmail.com",
+    "examName": "RDBMS",
+    "allottedTime": 30,
+    "totalMarks": 10,
+    "score": 0,
+    "status": "Auto-submitted (too many violations)",
+    "attempt_id": "3743c23a1380259d5a045b2aaaa18f2e",
+    "timestamp": "2026-03-17T23:44:39.535857"
   }
 ]

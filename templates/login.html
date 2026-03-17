@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,47 +12,48 @@
 
 <body class="proctor-ui">
 
-<div class="auth-wrap">
-    <div class="auth-card stagger">
-        <aside class="auth-brand">
-            <h2 class="mb-3">AI Proctor Suite</h2>
-            <p class="mb-4">Live webcam analysis, behavior tracking, and secure exam sessions in one workflow.</p>
-            <div class="signal-grid">
-                <div class="signal">Face Tracking</div>
-                <div class="signal">Tab Integrity</div>
-            </div>
-        </aside>
-
-        <section class="auth-form">
-            <h4 class="mb-3">Sign in to continue</h4>
-
-            {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
-
-            <form method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
+    <div class="auth-wrap">
+        <div class="auth-card stagger">
+            <aside class="auth-brand">
+                <h2 class="mb-3">AI Proctor Suite</h2>
+                <p class="mb-4">Live webcam analysis, behavior tracking, and secure exam sessions in one workflow.</p>
+                <div class="signal-grid">
+                    <div class="signal">Face Tracking</div>
+                    <div class="signal">Tab Integrity</div>
                 </div>
+            </aside>
 
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+            <section class="auth-form">
+                <h4 class="mb-3">Sign in to continue</h4>
+
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-proctor w-100">
+                        Login
+                    </button>
+                </form>
+
+                <div class="mt-3 text-center">
+                    <a href="/register">Create an account</a>
                 </div>
-
-                <button type="submit" class="btn btn-proctor w-100">
-                    Login
-                </button>
-            </form>
-
-            <div class="mt-3 text-center">
-                <a href="/register">Create an account</a>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
-</div>
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 </body>
+
 </html>

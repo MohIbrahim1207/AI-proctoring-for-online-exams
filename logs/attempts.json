@@ -590,9 +590,37 @@
     "exam_id": "sql",
     "exam_name": "SQL",
     "minutes": 30,
-    "status": "active",
+    "status": "exited",
     "seed": 1773760300,
     "started_at": "2026-03-17T20:41:40.187998",
-    "submitted_at": null
+    "submitted_at": "2026-03-17T21:02:19.400770",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "2974b5d15d4b90ef274515fd87d7f466",
+    "user": "ibrahim12hal@gmail.com",
+    "exam_id": "c_programming",
+    "exam_name": "C Programming",
+    "minutes": 45,
+    "status": "auto_submitted",
+    "seed": 1773768048,
+    "started_at": "2026-03-17T22:50:48.131072",
+    "submitted_at": "2026-03-17T22:52:12.395726",
+    "score": 0,
+    "totalMarks": 10
+  },
+  {
+    "attempt_id": "3743c23a1380259d5a045b2aaaa18f2e",
+    "user": "ibrahim12hal@gmail.com",
+    "exam_id": "rdbms",
+    "exam_name": "RDBMS",
+    "minutes": 30,
+    "status": "auto_submitted",
+    "seed": 1773771244,
+    "started_at": "2026-03-17T23:44:04.015388",
+    "submitted_at": "2026-03-17T23:44:39.541421",
+    "score": 0,
+    "totalMarks": 10
   }
 ]

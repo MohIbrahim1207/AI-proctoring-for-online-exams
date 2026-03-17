@@ -338,3 +338,9 @@
 2026-03-17 19:28:24.050212 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-17 19:28:26.384477 | ibrahim@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
 2026-03-17 20:02:13.237030 | ibrahim@gmail.com | Suspicious audio: loud talking/noise detected
+2026-03-17 22:51:47.340138 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 22:51:47.347682 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-17 22:52:12.349416 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 22:52:12.358437 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-17 23:44:39.460200 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-17 23:44:39.471705 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.

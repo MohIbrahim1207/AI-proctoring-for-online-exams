@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,6 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="{{ url_for('static', filename='proctor-theme.css') }}" rel="stylesheet">
 </head>
+
 <body class="proctor-ui">
   <div class="page-shell stagger">
     <header class="glass-header d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -20,18 +22,28 @@
     <div class="row g-3">
       <div class="col-md-8">
         <section class="panel mb-3">
-          <div class="panel-head"><h5 class="mb-0">Recent Screens</h5></div>
+          <div class="panel-head">
+            <h5 class="mb-0">Recent Screens</h5>
+          </div>
           <div class="panel-body thumb-grid" id="screens">Loading...</div>
         </section>
       </div>
       <div class="col-md-4">
         <section class="panel mb-3">
-          <div class="panel-head"><h6 class="mb-0">Proctor Logs</h6></div>
-          <div class="panel-body"><pre class="log" id="proctorLogs">Loading...</pre></div>
+          <div class="panel-head">
+            <h6 class="mb-0">Proctor Logs</h6>
+          </div>
+          <div class="panel-body">
+            <pre class="log" id="proctorLogs">Loading...</pre>
+          </div>
         </section>
         <section class="panel">
-          <div class="panel-head"><h6 class="mb-0">Violations</h6></div>
-          <div class="panel-body"><pre class="log" id="violations">Loading...</pre></div>
+          <div class="panel-head">
+            <h6 class="mb-0">Violations</h6>
+          </div>
+          <div class="panel-body">
+            <pre class="log" id="violations">Loading...</pre>
+          </div>
         </section>
       </div>
     </div>
@@ -58,7 +70,9 @@
                   </tr>
                 </thead>
                 <tbody id="studentReportsTable">
-                  <tr><td colspan="7" class="text-center">Loading reports...</td></tr>
+                  <tr>
+                    <td colspan="7" class="text-center">Loading reports...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -68,12 +82,15 @@
 
       <div class="col-lg-4">
         <section class="panel mb-3">
-          <div class="panel-head"><h6 class="mb-0">Add Feedback</h6></div>
+          <div class="panel-head">
+            <h6 class="mb-0">Add Feedback</h6>
+          </div>
           <div class="panel-body">
             <form id="feedbackForm" class="d-grid gap-2">
               <input class="form-control" id="feedbackUser" placeholder="Student email" required>
               <input class="form-control" id="feedbackExam" placeholder="Exam name" required>
-              <textarea class="form-control" id="feedbackText" rows="4" placeholder="Improvement feedback" required></textarea>
+              <textarea class="form-control" id="feedbackText" rows="4" placeholder="Improvement feedback"
+                required></textarea>
               <button type="submit" class="btn btn-proctor btn-sm">Save Feedback</button>
             </form>
             <small id="feedbackStatus" class="text-muted"></small>
@@ -81,8 +98,12 @@
         </section>
 
         <section class="panel">
-          <div class="panel-head"><h6 class="mb-0">Recent Feedback</h6></div>
-          <div class="panel-body"><pre class="log" id="feedbackLog">Loading...</pre></div>
+          <div class="panel-head">
+            <h6 class="mb-0">Recent Feedback</h6>
+          </div>
+          <div class="panel-body">
+            <pre class="log" id="feedbackLog">Loading...</pre>
+          </div>
         </section>
       </div>
     </div>
@@ -100,7 +121,7 @@
       return headers;
     }
 
-    async function loadScreens(){
+    async function loadScreens() {
       const res = await fetch('/api/uploads');
       if (res.status === 401) {
         window.location.href = '/';
@@ -109,16 +130,16 @@
       const items = await res.json();
       const container = document.getElementById('screens');
       container.innerHTML = '';
-      for (const it of items.slice(0,30)){
+      for (const it of items.slice(0, 30)) {
         const img = document.createElement('img');
         img.src = it.url;
         img.className = 'thumb';
         container.appendChild(img);
       }
-      if (items.length===0) container.innerText = 'No uploads yet.';
+      if (items.length === 0) container.innerText = 'No uploads yet.';
     }
 
-    async function loadLogs(){
+    async function loadLogs() {
       const r1 = await fetch('/api/proctor_logs');
       if (r1.status === 401) {
         window.location.href = '/';
@@ -245,4 +266,5 @@
     setInterval(loadStudentReports, 7000);
   </script>
 </body>
+
 </html>
