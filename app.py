@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import time
 import random
 import cv2
+import numpy as np
 import os
 import json
 import secrets
@@ -17,11 +18,14 @@ from flask_limiter.util import get_remote_address
 from flask_socketio import SocketIO
 try:
     import firebase_admin
-    from firebase_admin import credentials, db
+    from firebase_admin import credentials, db as firebase_db
 except Exception:
     firebase_admin = None
     credentials = None
-    db = None
+    firebase_db = None
+
+from flask_migrate import Migrate
+from models import db, User, Exam, Question, Attempt, Result, Alert, Feedback
 
 app = Flask(__name__)
 _env_secret = os.environ.get("FLASK_SECRET_KEY", "").strip()
@@ -38,6 +42,11 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
 
 SESSION_IDLE_TIMEOUT_SECONDS = int(os.environ.get("SESSION_IDLE_MINUTES", "30")) * 60
 SESSION_MAX_AGE_SECONDS = int(os.environ.get("SESSION_MAX_HOURS", "8")) * 3600
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+migrate = Migrate(app, db)
 
 limiter = Limiter(
     key_func=get_remote_address,
@@ -80,30 +89,7 @@ def add_security_headers(response):
 
 
 
-# ------------------------------
-# Ensure folders exist
-# ------------------------------
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("logs", exist_ok=True)
-
-# results storage file
-RESULTS_FILE = os.path.join("logs", "results.json")
-if not os.path.exists(RESULTS_FILE):
-    with open(RESULTS_FILE, "w") as f:
-        json.dump([], f)
-
-ATTEMPTS_FILE = os.path.join("logs", "attempts.json")
-if not os.path.exists(ATTEMPTS_FILE):
-    with open(ATTEMPTS_FILE, "w") as f:
-        json.dump([], f)
-
-FEEDBACK_FILE = os.path.join("logs", "feedback.json")
-if not os.path.exists(FEEDBACK_FILE):
-    with open(FEEDBACK_FILE, "w") as f:
-        json.dump([], f)
-
 PRECHECK_TTL_SECONDS = int(os.environ.get("PRECHECK_TTL_SECONDS", "300"))
-ATTEMPTS_LOCK = threading.Lock()
 USER_SOFT_VIOLATION_STREAKS = {}
 
 # Eye tracking tuning knobs. These are conservative defaults aimed at reducing
@@ -286,85 +272,70 @@ def _safe_write_json_file(path, payload):
 
 
 def load_attempts():
-    with ATTEMPTS_LOCK:
-        return _safe_read_json_file(ATTEMPTS_FILE, [])
+    return Attempt.query.all()
 
 
-def save_attempts(attempts):
-    with ATTEMPTS_LOCK:
-        _safe_write_json_file(ATTEMPTS_FILE, attempts)
+def save_attempts(attempts_data):
+    # This is a legacy function. In the new DB version, we save individual objects.
+    # We'll implement it to sync with the DB if needed, but ideally, we use DB directly.
+    pass
 
 
 def _find_active_attempt(attempts, user, exam_id=None):
-    for attempt in reversed(attempts):
-        if attempt.get("user") != user:
-            continue
-        if attempt.get("status") != "active":
-            continue
-        if exam_id and attempt.get("exam_id") != exam_id:
-            continue
-        return attempt
-    return None
+    query = Attempt.query.filter_by(user_email=user, status="active")
+    if exam_id:
+        query = query.filter_by(exam_id=exam_id)
+    return query.order_by(Attempt.started_at.desc()).first()
 
 
 def create_attempt(user, exam_meta):
-    attempt = {
-        "attempt_id": secrets.token_hex(16),
-        "user": user,
-        "exam_id": exam_meta["id"],
-        "exam_name": exam_meta["name"],
-        "minutes": exam_meta["minutes"],
-        "status": "active",
-        "seed": int(time.time()),
-        "started_at": datetime.now().isoformat(),
-        "submitted_at": None,
-    }
-    attempts = load_attempts()
-    attempts.append(attempt)
-    save_attempts(attempts)
+    attempt = Attempt(
+        attempt_id=secrets.token_hex(16),
+        user_email=user,
+        exam_id=exam_meta["id"],
+        exam_name=exam_meta["name"],
+        minutes=exam_meta["minutes"],
+        status="active",
+        seed=int(time.time()),
+        started_at=datetime.utcnow(),
+    )
+    db.session.add(attempt)
+    db.session.commit()
     return attempt
 
 
 def finalize_attempt(attempt_id, *, status, score=None, total_marks=None):
-    attempts = load_attempts()
-    updated = None
-    for attempt in attempts:
-        if attempt.get("attempt_id") == attempt_id:
-            if attempt.get("status") != "active":
-                return attempt
-            attempt["status"] = status
-            attempt["submitted_at"] = datetime.now().isoformat()
-            if score is not None:
-                attempt["score"] = score
-            if total_marks is not None:
-                attempt["totalMarks"] = total_marks
-            updated = attempt
-            break
-
-    if updated:
-        save_attempts(attempts)
-    return updated
+    attempt = Attempt.query.filter_by(attempt_id=attempt_id).first()
+    if attempt:
+        if attempt.status != "active":
+            return attempt
+        attempt.status = status
+        attempt.submitted_at = datetime.utcnow()
+        if score is not None:
+            attempt.score = score
+        if total_marks is not None:
+            attempt.total_marks = total_marks
+        db.session.commit()
+        return attempt
+    return None
 
 
 def load_feedbacks():
-    return _safe_read_json_file(FEEDBACK_FILE, [])
+    return Feedback.query.order_by(Feedback.timestamp.desc()).all()
 
 
 def save_feedbacks(feedbacks):
-    _safe_write_json_file(FEEDBACK_FILE, feedbacks)
+    # Legacy function
+    pass
 
 
 def load_users():
-    try:
-        with open(USERS_FILE, 'r') as f:
-            return json.load(f)
-    except Exception:
-        return []
+    return User.query.all()
 
 
 def save_users(users):
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users, f, indent=2)
+    # Legacy function
+    pass
 
 
 def _safe_student_id(raw_student_id):
@@ -497,13 +468,12 @@ def login():
         password = request.form.get("password")
         role = request.form.get("role")
 
-        users = load_users()
-        user = next((u for u in users if u.get('email') == email), None)
-        if user and check_password_hash(user.get('password', ''), password):
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password_hash, password):
             now_ts = int(time.time())
             session["user"] = email
-            session["role"] = user.get('role', role)
-            session["name"] = user.get('name', email)
+            session["role"] = user.role
+            session["name"] = user.name
             session["login_ts"] = now_ts
             session["last_activity_ts"] = now_ts
             session.permanent = True
@@ -629,10 +599,18 @@ def upload_frame():
         })
 
     safe_student_id = _safe_student_id(student_id)
-    filename = f"uploads/{safe_student_id}_{datetime.now().timestamp()}.jpg"
-    file.save(filename)
+    filename = None
 
-    image = cv2.imread(filename)
+    try:
+        data = file.read()
+    except Exception:
+        data = None
+
+    if not data:
+        return jsonify({"status": "error", "issues": ["Invalid image frame"]})
+
+    buf = np.frombuffer(data, dtype=np.uint8)
+    image = cv2.imdecode(buf, cv2.IMREAD_COLOR)
     if image is None:
         return jsonify({
             "status": "error",
@@ -797,31 +775,31 @@ def upload_frame():
                     user_state["off_center"] = max(0, user_state["off_center"] - 1)
 
     if issues:
+        # Save an evidence frame only when a violation occurs (reduces I/O and speeds up realtime checks).
+        filename = f"uploads/{safe_student_id}_{datetime.now().timestamp()}.jpg"
+        try:
+            cv2.imwrite(filename, image)
+        except Exception:
+            filename = None
+
+        # Save alert to DB
+        active_attempt = _find_active_attempt(None, student_id)
+        alert_entry = Alert(
+            user_email=student_id,
+            attempt_id=active_attempt.attempt_id if active_attempt else None,
+            issues=issues,
+            file_path=filename,
+            timestamp=datetime.utcnow()
+        )
+        db.session.add(alert_entry)
+        db.session.commit()
+
+        # also append to logs for legacy view/debug
         with open("logs/proctor_log.txt", "a") as log:
             log.write(f"{datetime.now()} | {student_id} | {issues}\n")
-        # structured alerts file
-        alerts_path = os.path.join('logs', 'alerts.json')
-        alert_entry = {
-            'user': student_id,
-            'issues': issues,
-            'file': filename,
-            'timestamp': datetime.now().isoformat()
-        }
-        try:
-            if os.path.exists(alerts_path):
-                with open(alerts_path, 'r') as af:
-                    alerts = json.load(af)
-            else:
-                alerts = []
-        except Exception:
-            alerts = []
         
-        alerts.append(alert_entry)
-        try:
-            with open(alerts_path, 'w') as af:
-                json.dump(alerts, af, indent=2)
-        except Exception:
-            pass
+        with open("logs/violations.txt", "a") as v:
+            v.write(f"{datetime.now()} | {student_id} | {issues}\n")
 
         # also append to violations.txt for legacy view
         with open("logs/violations.txt", "a") as v:
@@ -862,37 +840,27 @@ def log_violation():
     student_id = data.get("student_id", "unknown")
     reason = data.get("reason", "unknown")
 
+    # Save alert to DB
+    active_attempt = _find_active_attempt(None, student_id)
+    alert_entry = Alert(
+        user_email=student_id,
+        attempt_id=active_attempt.attempt_id if active_attempt else None,
+        issues=[reason],
+        timestamp=datetime.utcnow()
+    )
+    db.session.add(alert_entry)
+    db.session.commit()
+
     # append plain text log (legacy)
     with open("logs/violations.txt", "a") as log:
         log.write(f"{datetime.now()} | {student_id} | {reason}\n")
 
-    # append structured alerts
-    alerts_path = os.path.join('logs', 'alerts.json')
-    entry = {'user': student_id, 'reason': reason, 'timestamp': datetime.now().isoformat()}
-    try:
-        if os.path.exists(alerts_path):
-            with open(alerts_path, 'r') as af:
-                alerts = json.load(af)
-        else:
-            alerts = []
-    except Exception:
-        alerts = []
-
-    alerts.append(entry)
-    try:
-        with open(alerts_path, 'w') as af:
-            json.dump(alerts, af, indent=2)
-    except Exception:
-        pass
-
     # count alerts for this student and auto-submit once when threshold reached
-    user_alerts = [a for a in alerts if a.get('user') == student_id]
+    alerts_count = Alert.query.filter_by(user_email=student_id).count()
     auto_submitted = False
-    if len(user_alerts) >= MAX_WARNINGS:
-        attempts = load_attempts()
-        active_attempt = _find_active_attempt(attempts, student_id)
+    if alerts_count >= MAX_WARNINGS:
         if active_attempt:
-            exam_id = active_attempt.get("exam_id")
+            exam_id = active_attempt.exam_id
             exam_meta = next((x for x in AVAILABLE_EXAMS if x["id"] == exam_id), None)
             total_marks = len(load_questions(exam_id)) if exam_id else 0
             result_entry = {
@@ -902,12 +870,12 @@ def log_violation():
                 "totalMarks": total_marks,
                 "score": 0,
                 "status": "Auto-submitted (too many violations)",
-                "attempt_id": active_attempt.get("attempt_id"),
+                "attempt_id": active_attempt.attempt_id,
                 "timestamp": datetime.now().isoformat(),
             }
             append_result(result_entry)
             updated = finalize_attempt(
-                active_attempt.get("attempt_id"),
+                active_attempt.attempt_id,
                 status="auto_submitted",
                 score=0,
                 total_marks=total_marks,
@@ -930,11 +898,21 @@ def log_violation():
 def api_results():
     if "user" not in session:
         return jsonify([])
-
     user = session.get("user")
-    results = load_results()
-    user_results = [r for r in results if r.get("user") == user]
-    return jsonify(user_results)
+    results = Result.query.filter_by(user_email=user).order_by(Result.timestamp.desc()).all()
+    output = []
+    for r in results:
+        output.append({
+            'user': r.user_email,
+            'examName': r.exam_name,
+            'allottedTime': r.allotted_time,
+            'totalMarks': r.total_marks,
+            'score': r.score,
+            'status': r.status,
+            'attempt_id': r.attempt_id,
+            'timestamp': r.timestamp.isoformat() if r.timestamp else ''
+        })
+    return jsonify(output)
 
 
 @app.route("/api/active_attempt")
@@ -950,10 +928,10 @@ def api_active_attempt():
 
     return jsonify({
         "active": {
-            "attempt_id": active_attempt.get("attempt_id"),
-            "exam_id": active_attempt.get("exam_id"),
-            "exam_name": active_attempt.get("exam_name"),
-            "started_at": active_attempt.get("started_at"),
+            "attempt_id": active_attempt.attempt_id,
+            "exam_id": active_attempt.exam_id,
+            "exam_name": active_attempt.exam_name,
+            "started_at": active_attempt.started_at.isoformat() if active_attempt.started_at else None,
         }
     })
 
@@ -970,8 +948,8 @@ def api_exam_exit():
         clear_exam_session_context()
         return jsonify({"status": "no_active_attempt"})
 
-    attempt_id = active_attempt.get("attempt_id")
-    exam_id = active_attempt.get("exam_id")
+    attempt_id = active_attempt.attempt_id
+    exam_id = active_attempt.exam_id
     total_marks = len(load_questions(exam_id)) if exam_id else 0
     finalized = finalize_attempt(
         attempt_id,
@@ -981,13 +959,12 @@ def api_exam_exit():
     )
 
     if finalized and finalized.get("status") == "exited":
-        existing_results = load_results()
-        already_written = any(r.get("attempt_id") == attempt_id for r in existing_results)
+        already_written = Result.query.filter_by(attempt_id=attempt_id).first() is not None
         if not already_written:
             append_result({
                 "user": user,
-                "examName": active_attempt.get("exam_name", "Unknown Exam"),
-                "allottedTime": active_attempt.get("minutes", 0),
+                "examName": active_attempt.exam_name,
+                "allottedTime": active_attempt.minutes,
                 "totalMarks": total_marks,
                 "score": 0,
                 "status": "Exited by student",
@@ -1005,35 +982,42 @@ def api_exam_exit():
 def load_results():
     if FIREBASE_ENABLED:
         try:
-            payload = db.reference("results").get()
+            payload = firebase_db.reference("results").get()
             return _firebase_results_to_list(payload)
         except Exception as e:
-            print(f"Firebase read failed, using JSON fallback: {e}")
+            print(f"Firebase read failed, using DB fallback: {e}")
 
-    return _safe_read_json_file(RESULTS_FILE, [])
+    return Result.query.order_by(Result.timestamp.desc()).all()
 
 def save_results(results):
     if FIREBASE_ENABLED:
         try:
-            db.reference("results").set(results)
+            firebase_db.reference("results").set(results)
             return
         except Exception as e:
-            print(f"Firebase write failed, using JSON fallback: {e}")
-
-    _safe_write_json_file(RESULTS_FILE, results)
+            print(f"Firebase write failed, using DB fallback: {e}")
+    # We save individual results now.
+    pass
 
 
 def append_result(result_entry):
     if FIREBASE_ENABLED:
         try:
-            db.reference("results").push(result_entry)
-            return
+            firebase_db.reference("results").push(result_entry)
         except Exception as e:
-            print(f"Firebase append failed, using JSON fallback: {e}")
+            print(f"Firebase append failed, using DB fallback: {e}")
 
-    results = load_results()
-    results.append(result_entry)
-    save_results(results)
+    res = Result(
+        user_email=result_entry['user'],
+        exam_name=result_entry.get('examName'),
+        allotted_time=result_entry.get('allottedTime'),
+        total_marks=result_entry.get('totalMarks'),
+        score=result_entry.get('score'),
+        status=result_entry.get('status'),
+        attempt_id=result_entry.get('attempt_id'),
+    )
+    db.session.add(res)
+    db.session.commit()
 
 EXAMS_DIR = os.path.join(DATA_DIR, 'questions')
 if not os.path.exists(EXAMS_DIR):
@@ -1068,38 +1052,14 @@ def api_exams():
 
 def load_questions(exam_id=None):
     if not exam_id:
-        # fallback/legacy: load from questions.json if it exists, else empty
-        try:
-            with open(QUESTIONS_FILE, 'r') as f:
-                return json.load(f)
-        except Exception:
-            return []
+        return Question.query.all()
     
-    # find filename from ID
-    exam_meta = next((x for x in AVAILABLE_EXAMS if x['id'] == exam_id), None)
-    if not exam_meta:
-        return []
-    
-    filepath = os.path.join(EXAMS_DIR, exam_meta['file'])
-    try:
-        with open(filepath, 'r') as f:
-            return json.load(f)
-    except Exception:
-        return []
+    return Question.query.filter_by(exam_id=exam_id).all()
 
 
 def save_questions(questions_data, exam_id=None):
-    if exam_id:
-        exam_meta = next((x for x in AVAILABLE_EXAMS if x['id'] == exam_id), None)
-        if not exam_meta:
-            return False
-        filepath = os.path.join(EXAMS_DIR, exam_meta['file'])
-    else:
-        filepath = QUESTIONS_FILE
-
-    with open(filepath, 'w') as f:
-        json.dump(questions_data, f, indent=2)
-    return True
+    # Legacy function or used for admin. In DB we add records.
+    pass
 
 @app.route("/exam")
 def exam():
@@ -1120,21 +1080,29 @@ def exam():
     if precheck_exam_id != exam_id or (int(time.time()) - precheck_passed_at) > PRECHECK_TTL_SECONDS:
         return redirect(url_for("precheck", id=exam_id))
 
-    attempts = load_attempts()
-    active_attempt = _find_active_attempt(attempts, user)
-    if active_attempt and active_attempt.get("exam_id") != exam_id:
+    active_attempt = _find_active_attempt(None, user)
+    if active_attempt and active_attempt.exam_id != exam_id:
         return redirect(url_for("student_dashboard"))
 
     if not active_attempt:
         active_attempt = create_attempt(user, exam_meta)
 
     session['current_exam_id'] = exam_id
-    session['exam_seed'] = int(active_attempt.get('seed', int(time.time())))
+    session['exam_seed'] = active_attempt.seed
     session['exam_user'] = user
-    session['current_attempt_id'] = active_attempt.get('attempt_id')
+    session['current_attempt_id'] = active_attempt.attempt_id
 
     seed = session.get('exam_seed')
-    qs = load_questions(exam_id)
+    db_qs = load_questions(exam_id)
+    # Convert SQLAlchemy objects to dicts for randomization as in current logic
+    qs = []
+    for q in db_qs:
+        qs.append({
+            'id': q.id,
+            'question': q.question_text,
+            'options': list(q.options),
+            'answer': q.answer
+        })
     rng = random.Random(seed)
     rng.shuffle(qs)
     for q in qs:
@@ -1153,13 +1121,12 @@ def submit_exam():
 
     user = session.get("user")
     attempt_id = session.get("current_attempt_id")
-    attempts = load_attempts()
-    attempt = next((a for a in attempts if a.get("attempt_id") == attempt_id and a.get("user") == user), None)
-    if not attempt or attempt.get("exam_id") != exam_id:
+    attempt = Attempt.query.filter_by(attempt_id=attempt_id, user_email=user).first()
+    if not attempt or attempt.exam_id != exam_id:
         clear_exam_session_context()
         return redirect(url_for("student_dashboard"))
 
-    if attempt.get("status") != "active":
+    if attempt.status != "active":
         clear_exam_session_context()
         return redirect(url_for("student_dashboard"))
 
@@ -1168,7 +1135,15 @@ def submit_exam():
     # Reconstruct the same shuffled questions/options using the saved seed
     score = 0
     seed = session.get('exam_seed')
-    qs = load_questions(exam_id)
+    db_qs = load_questions(exam_id)
+    qs = []
+    for q in db_qs:
+        qs.append({
+            'id': q.id,
+            'question': q.question_text,
+            'options': list(q.options),
+            'answer': q.answer
+        })
     if seed:
         rng = random.Random(seed)
         rng.shuffle(qs)
@@ -1227,12 +1202,17 @@ def register():
         if not (name and email and password):
             return render_template('register.html', error='Fill all fields')
 
-        users = load_users()
-        if any(u.get('email') == email for u in users):
+        if User.query.filter_by(email=email).first():
             return render_template('register.html', error='User already exists')
 
-        users.append({'email': email, 'name': name, 'role': role, 'password': generate_password_hash(password)})
-        save_users(users)
+        new_user = User(
+            email=email,
+            name=name,
+            role=role,
+            password_hash=generate_password_hash(password)
+        )
+        db.session.add(new_user)
+        db.session.commit()
 
         return redirect(url_for('login'))
 
@@ -1276,51 +1256,46 @@ def api_teacher_student_reports():
     if 'user' not in session or session.get('role') != 'teacher':
         return jsonify({'error': 'forbidden'}), 403
 
-    results = load_results()
-    alerts_path = os.path.join('logs', 'alerts.json')
-    alerts = _safe_read_json_file(alerts_path, [])
-    feedbacks = load_feedbacks()
+    results = Result.query.order_by(Result.timestamp.desc()).all()
+    alerts = Alert.query.all()
+    feedbacks = Feedback.query.all()
 
     alerts_count_by_user = {}
     for a in alerts:
-        user = a.get('user')
-        if not user:
-            continue
-        alerts_count_by_user[user] = alerts_count_by_user.get(user, 0) + 1
+        u_email = a.user_email
+        alerts_count_by_user[u_email] = alerts_count_by_user.get(u_email, 0) + 1
 
     latest_feedback_by_key = {}
     for fb in feedbacks:
-        user = fb.get('user')
-        exam_name = fb.get('examName')
-        if not user or not exam_name:
-            continue
-        key = f"{user}::{exam_name}"
+        u_email = fb.user_email
+        exam_name = fb.exam_name
+        key = f"{u_email}::{exam_name}"
         existing = latest_feedback_by_key.get(key)
-        if not existing or str(fb.get('timestamp', '')) > str(existing.get('timestamp', '')):
+        if not existing or fb.timestamp > existing.timestamp:
             latest_feedback_by_key[key] = fb
 
     rows = []
     for r in results:
-        user = r.get('user')
-        exam_name = r.get('examName', 'Unknown Exam')
-        total_marks = int(r.get('totalMarks', 0) or 0)
-        score = int(r.get('score', 0) or 0)
-        pct = round((score / total_marks) * 100, 1) if total_marks > 0 else 0.0
-        key = f"{user}::{exam_name}"
-        latest_feedback = latest_feedback_by_key.get(key)
+        u_email = r.user_email
+        exam_name = r.exam_name
+        total_m = r.total_marks or 0
+        score_val = r.score or 0
+        pct = round((score_val / total_m) * 100, 1) if total_m > 0 else 0.0
+        key = f"{u_email}::{exam_name}"
+        latest_fb = latest_feedback_by_key.get(key)
 
         rows.append({
-            'user': user,
+            'user': u_email,
             'examName': exam_name,
-            'score': score,
-            'totalMarks': total_marks,
+            'score': score_val,
+            'totalMarks': total_m,
             'percentage': pct,
-            'status': r.get('status', ''),
-            'timestamp': r.get('timestamp', ''),
-            'alertsCount': alerts_count_by_user.get(user, 0),
-            'latestFeedback': latest_feedback.get('feedback') if latest_feedback else '',
-            'latestFeedbackBy': latest_feedback.get('teacher') if latest_feedback else '',
-            'latestFeedbackAt': latest_feedback.get('timestamp') if latest_feedback else '',
+            'status': r.status,
+            'timestamp': r.timestamp.isoformat() if r.timestamp else '',
+            'alertsCount': alerts_count_by_user.get(u_email, 0),
+            'latestFeedback': latest_fb.feedback_text if latest_fb else '',
+            'latestFeedbackBy': latest_fb.teacher_email if latest_fb else '',
+            'latestFeedbackAt': latest_fb.timestamp.isoformat() if latest_fb and latest_fb.timestamp else '',
         })
 
     rows.sort(key=lambda x: str(x.get('timestamp', '')), reverse=True)
@@ -1332,9 +1307,17 @@ def api_teacher_feedbacks():
     if 'user' not in session or session.get('role') != 'teacher':
         return jsonify({'error': 'forbidden'}), 403
 
-    feedbacks = load_feedbacks()
-    feedbacks.sort(key=lambda x: str(x.get('timestamp', '')), reverse=True)
-    return jsonify(feedbacks[:300])
+    feedbacks = Feedback.query.order_by(Feedback.timestamp.desc()).all()
+    output = []
+    for fb in feedbacks:
+        output.append({
+            'user': fb.user_email,
+            'examName': fb.exam_name,
+            'feedback': fb.feedback_text,
+            'teacher': fb.teacher_email,
+            'timestamp': fb.timestamp.isoformat() if fb.timestamp else ''
+        })
+    return jsonify(output[:300])
 
 
 @app.route('/api/teacher/feedback', methods=['POST'])
@@ -1350,19 +1333,17 @@ def api_teacher_feedback_create():
     if not user or not exam_name or not feedback:
         return jsonify({'error': 'user, examName and feedback are required'}), 400
 
-    entry = {
-        'id': secrets.token_hex(8),
-        'user': user,
-        'examName': exam_name,
-        'feedback': feedback,
-        'teacher': session.get('user'),
-        'timestamp': datetime.now().isoformat(),
-    }
+    entry = Feedback(
+        feedback_id=secrets.token_hex(8),
+        user_email=user,
+        exam_name=exam_name,
+        feedback_text=feedback,
+        teacher_email=session.get('user'),
+    )
 
-    feedbacks = load_feedbacks()
-    feedbacks.append(entry)
-    save_feedbacks(feedbacks)
-    return jsonify({'status': 'saved', 'entry': entry})
+    db.session.add(entry)
+    db.session.commit()
+    return jsonify({'status': 'saved'})
 
 
 @app.route('/api/proctor_logs')
@@ -1423,12 +1404,16 @@ def api_alerts():
     if 'user' not in session or session.get('role') != 'teacher':
         return jsonify({'error': 'forbidden'}), 403
 
-    alerts_path = os.path.join('logs', 'alerts.json')
-    try:
-        with open(alerts_path, 'r') as f:
-            return jsonify(json.load(f)[-200:][::-1])
-    except Exception:
-        return jsonify([])
+    alerts_objects = Alert.query.order_by(Alert.timestamp.desc()).limit(200).all()
+    output = []
+    for a in alerts_objects:
+        output.append({
+            'user': a.user_email,
+            'issues': a.issues,
+            'file': a.file_path,
+            'timestamp': a.timestamp.isoformat() if a.timestamp else ''
+        })
+    return jsonify(output)
 
 
 @app.route('/api/alerts_count')
@@ -1436,14 +1421,8 @@ def api_alerts_count():
     if 'user' not in session:
         return jsonify({'count': 0})
     user = session.get('user')
-    alerts_path = os.path.join('logs', 'alerts.json')
-    try:
-        with open(alerts_path, 'r') as f:
-            alerts = json.load(f)
-    except Exception:
-        alerts = []
-    user_alerts = [a for a in alerts if a.get('user') == user]
-    return jsonify({'count': len(user_alerts)})
+    count = Alert.query.filter_by(user_email=user).count()
+    return jsonify({'count': count})
 
 
 

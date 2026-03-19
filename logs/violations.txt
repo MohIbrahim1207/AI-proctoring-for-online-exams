@@ -344,3 +344,11 @@
 2026-03-17 22:52:12.358437 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
 2026-03-17 23:44:39.460200 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-17 23:44:39.471705 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-19 06:19:58.635102 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 06:19:58.637113 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 06:19:58.670787 | ibrahim@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-19 13:53:52.767137 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 13:53:52.768145 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 13:53:52.794970 | ibrahim@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
+2026-03-19 15:58:35.282967 | ibrahim@gmail.com | Tab switched
+2026-03-19 15:58:36.983163 | ibrahim@gmail.com | Tab switched

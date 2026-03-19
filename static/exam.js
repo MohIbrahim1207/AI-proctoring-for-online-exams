@@ -398,6 +398,7 @@ function initProctorSocket() {
       facesIndicator.textContent = `Faces Detected: ${count}`;
       if (count === 0) {
         facesIndicator.className = 'badge bg-danger fs-6';
+        alert('Violation: No face detected! Please ensure your face is visible to the camera.');
       } else if (count > 1) {
         facesIndicator.className = 'badge bg-warning text-dark fs-6';
       } else {
@@ -417,6 +418,9 @@ function initProctorSocket() {
     }
     if (message && alertsBox) {
       alertsBox.innerText = `Warning: ${message}`;
+      if (message.includes('Multiple faces detected')) {
+        alert('Violation: Multiple faces detected! Only one candidate is allowed during the exam.');
+      }
     }
   });
 }
@@ -480,6 +484,9 @@ function startProctoring() {
           violationCount += 1;
           if (alertsBox) {
             alertsBox.innerText = `Warning: ${data.issues.map(msg => msg.replace('Violation: ', '')).join('\n')}`;
+            if (data.issues.some(msg => msg.includes('Multiple faces detected'))) {
+              alert('Violation: Multiple faces detected! Only one candidate is allowed during the exam.');
+            }
           }
           await logViolation(data.issues.join('\n'));
           checkAutoSubmit();

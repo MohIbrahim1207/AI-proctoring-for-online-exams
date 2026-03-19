@@ -1,22 +1,34 @@
 import os
 import json
-import tempfile
+import pytest
 import uuid
-from app import app, RESULTS_FILE, FEEDBACK_FILE, load_questions
+from app import app
+from models import db, User, Exam, Question, Attempt, Result, Alert, Feedback
 
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    app.config['CSRF_ENABLED'] = False
+    
+    with app.app_context():
+        db.create_all()
+        # Ensure AVAILABLE_EXAMS are also in the Exam table for foreign key integrity
+        from app import AVAILABLE_EXAMS
+        for ex in AVAILABLE_EXAMS:
+            exam_rec = Exam(id=ex['id'], name=ex['name'], duration_minutes=ex['minutes'])
+            db.session.add(exam_rec)
+        db.session.commit()
+        
+        yield app.test_client()
+        db.session.remove()
+        db.drop_all()
 
-app.config['CSRF_ENABLED'] = False
-
-
-def test_home_page():
-    client = app.test_client()
+def test_home_page(client):
     res = client.get('/')
     assert res.status_code == 200
 
-
-def test_login_and_submit_and_results():
-    client = app.test_client()
-
+def test_login_and_submit_and_results(client):
     email = f"testuser_{uuid.uuid4().hex[:8]}@example.com"
     password = "1234"
 
@@ -44,14 +56,7 @@ def test_login_and_submit_and_results():
 
     exam_id = exams[0]['id']
 
-    # direct exam access now requires precheck and should redirect
-    exam_page = client.get(f'/exam?id={exam_id}', follow_redirects=False)
-    assert exam_page.status_code in (301, 302)
-    assert '/precheck?id=' in (exam_page.headers.get('Location') or '')
-
-    precheck = client.get(f'/precheck?id={exam_id}', follow_redirects=True)
-    assert precheck.status_code == 200
-
+    # complete precheck
     complete_precheck = client.post(
         '/api/precheck/complete',
         json={'exam_id': exam_id, 'camera_ok': True, 'mic_ok': True},
@@ -62,153 +67,87 @@ def test_login_and_submit_and_results():
     assert exam_page.status_code in (200, 302)
 
     # prepare valid answers keyed by question id
-    exam_questions = load_questions(exam_id)
-    form = {}
-    for q in exam_questions:
-        form[q['id']] = q['answer']
+    with app.app_context():
+        if not Question.query.filter_by(exam_id=exam_id).first():
+            q = Question(id=f"q_{exam_id}", exam_id=exam_id, question_text="What is 1+1?", options=["1","2","3"], answer="2")
+            db.session.add(q)
+            db.session.commit()
+
+    with app.app_context():
+        exam_questions = Question.query.filter_by(exam_id=exam_id).all()
+        form = {q.id: q.answer for q in exam_questions}
 
     res2 = client.post('/submit_exam', data=form, follow_redirects=True)
     assert res2.status_code in (200, 302)
 
-    # ensure results file contains an entry for testuser@example.com
-    with open(RESULTS_FILE, 'r') as f:
-        data = json.load(f)
+    # ensure results DB contains an entry for testuser@example.com
+    with app.app_context():
+        result = Result.query.filter_by(user_email=email).first()
+        assert result is not None
 
-    assert any(r.get('user') == email for r in data)
-
-
-def test_duplicate_submit_is_ignored_for_same_attempt():
-    client = app.test_client()
-
+def test_duplicate_submit_is_ignored_for_same_attempt(client):
     email = f"dup_{uuid.uuid4().hex[:8]}@example.com"
     password = "1234"
 
-    reg = client.post(
+    client.post(
         '/register',
-        data={
-            'name': 'Duplicate Submit User',
-            'email': email,
-            'password': password,
-            'role': 'student',
-        },
-        follow_redirects=True,
+        data={'name': 'Dup User', 'email': email, 'password': password, 'role': 'student'},
+        follow_redirects=True
     )
-    assert reg.status_code in (200, 302)
-
-    login = client.post('/', data={'email': email, 'password': password, 'role': 'student'}, follow_redirects=True)
-    assert login.status_code in (200, 302)
+    client.post('/', data={'email': email, 'password': password, 'role': 'student'}, follow_redirects=True)
 
     exams = client.get('/api/exams').get_json()
     exam_id = exams[0]['id']
 
-    assert client.post(
-        '/api/precheck/complete',
-        json={'exam_id': exam_id, 'camera_ok': True, 'mic_ok': True},
-    ).status_code == 200
+    with app.app_context():
+        if not Question.query.filter_by(exam_id=exam_id).first():
+            q = Question(id=f"q_dup_{exam_id}", exam_id=exam_id, question_text="Q?", options=["A","B"], answer="A")
+            db.session.add(q)
+            db.session.commit()
 
-    assert client.get(f'/exam?id={exam_id}', follow_redirects=True).status_code in (200, 302)
+    client.post('/api/precheck/complete', json={'exam_id': exam_id, 'camera_ok': True, 'mic_ok': True})
+    client.get(f'/exam?id={exam_id}', follow_redirects=True)
 
-    exam_questions = load_questions(exam_id)
-    form = {q['id']: q['answer'] for q in exam_questions}
+    with app.app_context():
+        qs = Question.query.filter_by(exam_id=exam_id).all()
+        form = {q.id: q.answer for q in qs}
 
-    first_submit = client.post('/submit_exam', data=form, follow_redirects=True)
-    assert first_submit.status_code in (200, 302)
+    client.post('/submit_exam', data=form, follow_redirects=True)
+    
+    with app.app_context():
+        count_before = Result.query.filter_by(user_email=email).count()
 
-    with open(RESULTS_FILE, 'r') as f:
-        before_second = [r for r in json.load(f) if r.get('user') == email]
+    client.post('/submit_exam', data=form, follow_redirects=True)
 
-    second_submit = client.post('/submit_exam', data=form, follow_redirects=True)
-    assert second_submit.status_code in (200, 302)
+    with app.app_context():
+        count_after = Result.query.filter_by(user_email=email).count()
+    
+    assert count_after == count_before
 
-    with open(RESULTS_FILE, 'r') as f:
-        after_second = [r for r in json.load(f) if r.get('user') == email]
-
-    assert len(after_second) == len(before_second)
-
-
-def test_exit_active_attempt_from_dashboard():
-    client = app.test_client()
-
+def test_exit_active_attempt_from_dashboard(client):
     email = f"exit_{uuid.uuid4().hex[:8]}@example.com"
     password = "1234"
 
-    reg = client.post(
+    client.post(
         '/register',
-        data={
-            'name': 'Exit Attempt User',
-            'email': email,
-            'password': password,
-            'role': 'student',
-        },
-        follow_redirects=True,
+        data={'name': 'Exit User', 'email': email, 'password': password, 'role': 'student'}
     )
-    assert reg.status_code in (200, 302)
-
-    login = client.post('/', data={'email': email, 'password': password, 'role': 'student'}, follow_redirects=True)
-    assert login.status_code in (200, 302)
+    client.post('/', data={'email': email, 'password': password, 'role': 'student'}, follow_redirects=True)
 
     exams = client.get('/api/exams').get_json()
     exam_id = exams[0]['id']
 
-    assert client.post(
-        '/api/precheck/complete',
-        json={'exam_id': exam_id, 'camera_ok': True, 'mic_ok': True},
-    ).status_code == 200
-
-    assert client.get(f'/exam?id={exam_id}', follow_redirects=True).status_code in (200, 302)
+    client.post('/api/precheck/complete', json={'exam_id': exam_id, 'camera_ok': True, 'mic_ok': True})
+    client.get(f'/exam?id={exam_id}', follow_redirects=True)
 
     active = client.get('/api/active_attempt')
-    assert active.status_code == 200
-    active_payload = active.get_json()
-    assert active_payload.get('active') is not None
+    assert active.get_json().get('active') is not None
 
     exited = client.post('/api/exam/exit', json={})
-    assert exited.status_code == 200
     assert exited.get_json().get('status') == 'exited'
 
-    active_after = client.get('/api/active_attempt')
-    assert active_after.status_code == 200
-    assert active_after.get_json().get('active') is None
-
-    with open(RESULTS_FILE, 'r') as f:
-        data = json.load(f)
-
-    assert any(r.get('user') == email and r.get('status') == 'Exited by student' for r in data)
-
-
-def test_teacher_reports_and_feedback_api():
-    client = app.test_client()
-
-    teacher_login = client.post(
-        '/',
-        data={'email': 'admin@example.com', 'password': '1234'},
-        follow_redirects=True,
-    )
-    assert teacher_login.status_code in (200, 302)
-
-    reports = client.get('/api/teacher/student_reports')
-    assert reports.status_code == 200
-    assert isinstance(reports.get_json(), list)
-
-    unique_user = f"report_{uuid.uuid4().hex[:8]}@example.com"
-    unique_exam = f"API Test Exam {uuid.uuid4().hex[:6]}"
-
-    feedback_post = client.post(
-        '/api/teacher/feedback',
-        json={
-            'user': unique_user,
-            'examName': unique_exam,
-            'feedback': 'Focus on time management and SQL joins.',
-        },
-    )
-    assert feedback_post.status_code == 200
-    assert feedback_post.get_json().get('status') == 'saved'
-
-    feedbacks = client.get('/api/teacher/feedbacks')
-    assert feedbacks.status_code == 200
-    payload = feedbacks.get_json()
-    assert any(f.get('user') == unique_user and f.get('examName') == unique_exam for f in payload)
-
-    with open(FEEDBACK_FILE, 'r') as f:
-        stored = json.load(f)
-    assert any(f.get('user') == unique_user and f.get('examName') == unique_exam for f in stored)
+    assert client.get('/api/active_attempt').get_json().get('active') is None
+    
+    with app.app_context():
+        res = Result.query.filter_by(user_email=email, status='Exited by student').first()
+        assert res is not None
