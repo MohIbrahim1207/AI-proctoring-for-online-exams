@@ -86,7 +86,7 @@
     window.STUDENT_ID = "{{ session.get('user','') }}";
     window.CSRF_TOKEN = "{{ csrf_token }}";
   </script>
-  <script type="module" src="{{ url_for('static', filename='dashboard.js') }}"></script>
+  <script type="module" src="{{ url_for('static', filename='dashboard.js') }}?v=2"></script>
 </body>
 
 </html>

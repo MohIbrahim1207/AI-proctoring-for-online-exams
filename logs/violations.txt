@@ -352,3 +352,6 @@
 2026-03-19 13:53:52.794970 | ibrahim@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.
 2026-03-19 15:58:35.282967 | ibrahim@gmail.com | Tab switched
 2026-03-19 15:58:36.983163 | ibrahim@gmail.com | Tab switched
+2026-03-19 23:37:25.369210 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 23:37:25.371024 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 23:37:28.380479 | ibrahim12hal@gmail.com | Violation: No face detected. Please ensure your face is visible to the camera.

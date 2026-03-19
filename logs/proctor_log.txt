@@ -190,3 +190,4 @@
 2026-03-17 23:44:39.450688 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-19 06:19:58.634117 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
 2026-03-19 13:53:52.766148 | ibrahim@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']
+2026-03-19 23:37:25.367036 | ibrahim12hal@gmail.com | ['Violation: No face detected. Please ensure your face is visible to the camera.']

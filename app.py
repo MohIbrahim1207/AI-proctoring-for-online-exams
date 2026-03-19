@@ -26,6 +26,10 @@ except Exception:
 
 from flask_migrate import Migrate
 from models import db, User, Exam, Question, Attempt, Result, Alert, Feedback
+import mimetypes
+
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('text/css', '.css')
 
 app = Flask(__name__)
 _env_secret = os.environ.get("FLASK_SECRET_KEY", "").strip()
@@ -66,7 +70,7 @@ def _build_csp_header():
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
         "img-src 'self' data: blob:; "
         "font-src 'self' data: https://cdn.jsdelivr.net; "
-        "connect-src 'self' ws: wss:; "
+        "connect-src 'self' ws: wss: https://cdn.jsdelivr.net; "
         "media-src 'self' blob:; "
         "object-src 'none'; "
         "base-uri 'self'; "
@@ -416,6 +420,10 @@ def csrf_protect():
 
 
 init_firebase()
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 # ------------------------------
 # Load Face Detection Model ONCE
