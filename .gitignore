@@ -1,0 +1,27 @@
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local environment secrets
+.env
+.env.local
+
+# SQLite Database
+instance/
+*.db
+
+# Application logs & uploads
+logs/
+uploads/
+
+# IDE files
+.vscode/
+.idea/

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ai-proctoring-exam
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT app:app
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: FLASK_SECURE_COOKIE
+        value: "1"
+      - key: SESSION_IDLE_MINUTES
+        value: "30"
+      - key: SESSION_MAX_HOURS
+        value: "8"
+      - key: PRECHECK_TTL_SECONDS
+        value: "300"
